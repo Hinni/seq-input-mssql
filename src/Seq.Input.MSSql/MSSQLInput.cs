@@ -8,6 +8,8 @@ namespace Seq.Input.MSSql
         Description = "")]
     public class MSSQLInput : SeqApp, IPublishJson
     {
+        private Executor _executor;
+
         [SeqAppSetting(
             DisplayName = "Refresh every x seconds",
             IsOptional = false,
@@ -45,12 +47,12 @@ namespace Seq.Input.MSSql
 
         public void Start(TextWriter inputWriter)
         {
-            throw new NotImplementedException();
+            _executor = new Executor(Log, inputWriter, DatabaseConnectionString, ExecuteQuery, "", "");
+            _executor.Start();
         }
 
         public void Stop()
         {
-            throw new NotImplementedException();
         }
     }
 }
