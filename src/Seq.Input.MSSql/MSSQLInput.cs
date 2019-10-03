@@ -45,9 +45,23 @@ namespace Seq.Input.MSSql
             HelpText = "")]
         public string ExecuteQuery { get; set; }
 
+        [SeqAppSetting(
+            DisplayName = "Column name of TimeStamp",
+            IsOptional = false,
+            InputType = SettingInputType.Text,
+            HelpText = "")]
+        public string ColumnNameTimeStamp { get; set; }
+
+        [SeqAppSetting(
+            DisplayName = "Column name of Message",
+            IsOptional = false,
+            InputType = SettingInputType.Text,
+            HelpText = "")]
+        public string ColumnNameMessage { get; set; }
+
         public void Start(TextWriter inputWriter)
         {
-            _executor = new Executor(Log, inputWriter, DatabaseConnectionString, ExecuteQuery, "", "");
+            _executor = new Executor(Log, inputWriter, DatabaseConnectionString, ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage);
             _executor.Start();
         }
 
