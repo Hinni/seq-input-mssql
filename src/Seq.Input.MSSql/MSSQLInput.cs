@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Seq.Apps;
 
 namespace Seq.Input.MSSql
@@ -14,14 +13,14 @@ namespace Seq.Input.MSSql
             DisplayName = "Refresh every x seconds",
             IsOptional = false,
             InputType = SettingInputType.Integer,
-            HelpText = "")]
+            HelpText = "Search for new rows every x seconds.")]
         public int QueryEverySeconds { get; set; } = 15;
 
         [SeqAppSetting(
             DisplayName = "Database Connection string",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "")]
+            HelpText = "MSSQL connection string.")]
         public string DatabaseConnectionString { get; set; }
 
         [SeqAppSetting(
@@ -42,26 +41,33 @@ namespace Seq.Input.MSSql
             DisplayName = "Query to execute on server",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "")]
+            HelpText = "SQL query to execute.")]
         public string ExecuteQuery { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Column name of TimeStamp",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "")]
+            HelpText = "Select TimeStamp column.")]
         public string ColumnNameTimeStamp { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Column name of Message",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "")]
+            HelpText = "Select Message column.")]
         public string ColumnNameMessage { get; set; }
+
+        [SeqAppSetting(
+            DisplayName = "Include following columns as properties",
+            IsOptional = false,
+            InputType = SettingInputType.Text,
+            HelpText = "Comma separated column name list.")]
+        public string ColumnNamesInclude { get; set; }
 
         public void Start(TextWriter inputWriter)
         {
-            _executor = new Executor(Log, inputWriter, DatabaseConnectionString, ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage);
+            _executor = new Executor(Log, inputWriter, DatabaseConnectionString, ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
             _executor.Start();
         }
 

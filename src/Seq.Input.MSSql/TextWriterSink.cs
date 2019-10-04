@@ -16,6 +16,7 @@ namespace Seq.Input.MSSql
         public TextWriterSink(TextWriter textWriter)
         {
             _textFormatter = new CompactJsonFormatter();
+            _textWriter = textWriter;
         }
 
         public void Emit(LogEvent logEvent)
