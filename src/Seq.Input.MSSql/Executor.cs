@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
@@ -12,16 +13,18 @@ namespace Seq.Input.MSSql
     {
         private readonly ILogger _logger;
         private readonly TextWriter _textWriter;
+        private readonly FileInfo _fileInfo;
         private readonly string _connectionString;
         private readonly string _query;
         private readonly string _columnNameTimeStamp;
         private readonly string _columnNameMessage;
         private readonly string _columnNamesInclude;
 
-        public Executor(ILogger logger, TextWriter textWriter, string connectionString, string query, string columnNameTimeStamp, string columnNameMessage, string columnNamesInclude)
+        public Executor(ILogger logger, TextWriter textWriter, FileInfo fileInfo, string connectionString, string query, string columnNameTimeStamp, string columnNameMessage, string columnNamesInclude)
         {
             _logger = logger;
             _textWriter = textWriter;
+            _fileInfo = fileInfo;
             _connectionString = connectionString;
             _query = query;
             _columnNameTimeStamp = columnNameTimeStamp;
@@ -37,10 +40,24 @@ namespace Seq.Input.MSSql
 
                 using (var command = connection.CreateCommand())
                 {
+                    // Get last timestamp from file
+                    var queryString = _query;
+                    if (_fileInfo.Exists)
+                    {
+                        var dateTime = DateTime.Parse(File.ReadAllText(_fileInfo.FullName));
+                        queryString += $" WHERE {_columnNameTimeStamp} >= '{dateTime.ToShortDateString()}'";
+                    }
+
                     // Create command and execute
                     command.CommandText = _query;
                     command.CommandType = CommandType.Text;
                     var dataReader = command.ExecuteReader();
+
+                    // Write new timestamp to file
+                    using (var sw = _fileInfo.CreateText())
+                    {
+                        sw.Write(DateTime.Now.ToString("u"));
+                    }
 
                     // Get data for properties
                     var columns = dataReader.GetColumnSchema();

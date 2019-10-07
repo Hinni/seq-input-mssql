@@ -40,11 +40,11 @@ namespace Seq.Input.MSSql
         public string DatabasePassword { get; set; }
 
         [SeqAppSetting(
-            DisplayName = "Query to execute on server",
+            DisplayName = "Table or view name",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "SQL query to execute.")]
-        public string ExecuteQuery { get; set; }
+            HelpText = "SQL table or view to query.")]
+        public string TableOrViewName { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Column name of TimeStamp",
@@ -69,8 +69,10 @@ namespace Seq.Input.MSSql
 
         public void Start(TextWriter inputWriter)
         {
+            var settingsFileInfo = new FileInfo(Path.Combine(App.StoragePath, "lastScan.txt"));
+            var query = $"SELECT * FROM {TableOrViewName}";
             var stringBuilder = new SqlConnectionStringBuilder(DatabaseConnectionString) { UserID = DatabaseUsername, Password = DatabasePassword };
-            var executor = new Executor(Log, inputWriter, stringBuilder.ToString(), ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
+            var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
             _executorTask = new ExecutorTask(Log, TimeSpan.FromSeconds(QueryEverySeconds), executor);
         }
 
