@@ -9,9 +9,9 @@ namespace Seq.Input.MSSql
 {
     public class TextWriterSink : ILogEventSink
     {
-        readonly TextWriter _textWriter;
-        readonly ITextFormatter _textFormatter;
-        readonly object _syncRoot = new object();
+        private readonly TextWriter _textWriter;
+        private readonly ITextFormatter _textFormatter;
+        private readonly object _syncRoot = new object();
 
         public TextWriterSink(TextWriter textWriter)
         {
