@@ -2,7 +2,25 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatSpecificWarningsAsErrors />
+    <Authors>Hinni Solutions and Contributors</Authors>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <Description>Ingest events into Seq directly from MSSQL table.</Description>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright © 2019 Hinni Solutions and Contributors</Copyright>
+    <RepositoryUrl>https://github.com/Hinni/seq-input-mssql</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>seq-app Seq Input MSSQL</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIconUrl>https://raw.githubusercontent.com/datalust/sqelf/master/asset/seq-input-gelf.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/Hinni/seq-input-mssql</PackageProjectUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
+    <None Include="./obj/publish/**/*" Exclude="./obj/publish/Seq.Input.MSSql.*;./obj/publish/Seq.Apps.dll;./obj/publish/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Seq.Apps" Version="5.1.0" />
