@@ -1,24 +1,22 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.IO;
-using System.Threading;
 using Seq.Apps;
 
 namespace Seq.Input.MSSql
 {
     [SeqApp("MSSQL Input", AllowReprocessing = false,
         Description = "")]
-    public class MSSQLInput : SeqApp, IPublishJson
+    public class MSSQLInput : SeqApp, IPublishJson, IDisposable
     {
-        private Executor _executor;
-        private Timer _timer;
-        private SqlConnectionStringBuilder _stringBuilder;
+        private ExecutorTask _executorTask;
 
         [SeqAppSetting(
-            DisplayName = "Refresh every x milliseconds",
+            DisplayName = "Refresh every x seconds",
             IsOptional = false,
             InputType = SettingInputType.Integer,
-            HelpText = "Search for new rows every x milliseconds.")]
-        public int QueryEveryMilliseconds { get; set; } = 15;
+            HelpText = "Search for new rows every x seconds.")]
+        public int QueryEverySeconds { get; set; } = 15;
 
         [SeqAppSetting(
             DisplayName = "Database connection string",
@@ -71,15 +69,19 @@ namespace Seq.Input.MSSql
 
         public void Start(TextWriter inputWriter)
         {
-            _stringBuilder = new SqlConnectionStringBuilder(DatabaseConnectionString) { UserID = DatabaseUsername, Password = DatabasePassword };
-            _executor = new Executor(Log, inputWriter, _stringBuilder.ToString(), ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
-            _timer = new Timer(_executor.Start, null, 5000, QueryEveryMilliseconds);
+            var stringBuilder = new SqlConnectionStringBuilder(DatabaseConnectionString) { UserID = DatabaseUsername, Password = DatabasePassword };
+            var executor = new Executor(Log, inputWriter, stringBuilder.ToString(), ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
+            _executorTask = new ExecutorTask(Log, TimeSpan.FromSeconds(QueryEverySeconds), executor);
         }
 
         public void Stop()
         {
-            _timer?.Dispose();
-            _timer = null;
+            _executorTask.Stop();
+        }
+
+        public void Dispose()
+        {
+            _executorTask?.Dispose();
         }
     }
 }
