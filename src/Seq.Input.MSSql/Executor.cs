@@ -29,7 +29,7 @@ namespace Seq.Input.MSSql
             _columnNamesInclude = columnNamesInclude;
         }
 
-        public void Start()
+        public void Start(object state)
         {
             using (var connection = new SqlConnection(_connectionString))
             {

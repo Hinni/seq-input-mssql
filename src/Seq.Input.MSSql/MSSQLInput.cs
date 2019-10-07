@@ -1,5 +1,6 @@
 ﻿using System.Data.SqlClient;
 using System.IO;
+using System.Threading;
 using Seq.Apps;
 
 namespace Seq.Input.MSSql
@@ -9,14 +10,15 @@ namespace Seq.Input.MSSql
     public class MSSQLInput : SeqApp, IPublishJson
     {
         private Executor _executor;
+        private Timer _timer;
         private SqlConnectionStringBuilder _stringBuilder;
 
         [SeqAppSetting(
-            DisplayName = "Refresh every x seconds",
+            DisplayName = "Refresh every x milliseconds",
             IsOptional = false,
             InputType = SettingInputType.Integer,
-            HelpText = "Search for new rows every x seconds.")]
-        public int QueryEverySeconds { get; set; } = 15;
+            HelpText = "Search for new rows every x milliseconds.")]
+        public int QueryEveryMilliseconds { get; set; } = 15;
 
         [SeqAppSetting(
             DisplayName = "Database connection string",
@@ -69,15 +71,15 @@ namespace Seq.Input.MSSql
 
         public void Start(TextWriter inputWriter)
         {
-            // Add user credential information
             _stringBuilder = new SqlConnectionStringBuilder(DatabaseConnectionString) { UserID = DatabaseUsername, Password = DatabasePassword };
-
             _executor = new Executor(Log, inputWriter, _stringBuilder.ToString(), ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
-            _executor.Start();
+            _timer = new Timer(_executor.Start, null, 5000, QueryEveryMilliseconds);
         }
 
         public void Stop()
         {
+            _timer?.Dispose();
+            _timer = null;
         }
     }
 }
