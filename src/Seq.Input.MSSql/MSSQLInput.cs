@@ -19,7 +19,7 @@ namespace Seq.Input.MSSql
         public int QueryEverySeconds { get; set; } = 15;
 
         [SeqAppSetting(
-            DisplayName = "Database Connection string",
+            DisplayName = "Database connection string",
             IsOptional = false,
             InputType = SettingInputType.Text,
             HelpText = "MSSQL connection string - don't use TrustedConnection, just SQL credentials.")]
@@ -29,14 +29,14 @@ namespace Seq.Input.MSSql
             DisplayName = "Username",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "")]
+            HelpText = "Username for SQL credentials.")]
         public string DatabaseUsername { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Password",
             IsOptional = false,
             InputType = SettingInputType.Password,
-            HelpText = "SQL Password")]
+            HelpText = "Password for SQL credentials.")]
         public string DatabasePassword { get; set; }
 
         [SeqAppSetting(
