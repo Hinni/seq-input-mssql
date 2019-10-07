@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Data.SqlClient;
+using System.IO;
 using Seq.Apps;
 
 namespace Seq.Input.MSSql
@@ -8,6 +9,7 @@ namespace Seq.Input.MSSql
     public class MSSQLInput : SeqApp, IPublishJson
     {
         private Executor _executor;
+        private SqlConnectionStringBuilder _stringBuilder;
 
         [SeqAppSetting(
             DisplayName = "Refresh every x seconds",
@@ -20,7 +22,7 @@ namespace Seq.Input.MSSql
             DisplayName = "Database Connection string",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "MSSQL connection string.")]
+            HelpText = "MSSQL connection string - don't use TrustedConnection, just SQL credentials.")]
         public string DatabaseConnectionString { get; set; }
 
         [SeqAppSetting(
@@ -34,7 +36,7 @@ namespace Seq.Input.MSSql
             DisplayName = "Password",
             IsOptional = false,
             InputType = SettingInputType.Password,
-            HelpText = "")]
+            HelpText = "SQL Password")]
         public string DatabasePassword { get; set; }
 
         [SeqAppSetting(
@@ -48,14 +50,14 @@ namespace Seq.Input.MSSql
             DisplayName = "Column name of TimeStamp",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "Select TimeStamp column.")]
+            HelpText = "Select timestamp column.")]
         public string ColumnNameTimeStamp { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Column name of Message",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "Select Message column.")]
+            HelpText = "Select message text column.")]
         public string ColumnNameMessage { get; set; }
 
         [SeqAppSetting(
@@ -67,7 +69,10 @@ namespace Seq.Input.MSSql
 
         public void Start(TextWriter inputWriter)
         {
-            _executor = new Executor(Log, inputWriter, DatabaseConnectionString, ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
+            // Add user credential information
+            _stringBuilder = new SqlConnectionStringBuilder(DatabaseConnectionString) { UserID = DatabaseUsername, Password = DatabasePassword };
+
+            _executor = new Executor(Log, inputWriter, _stringBuilder.ToString(), ExecuteQuery, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
             _executor.Start();
         }
 
