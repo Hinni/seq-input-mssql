@@ -60,7 +60,7 @@ namespace Seq.Input.MSSql
                         // Write new timestamp to file
                         using (var sw = _fileInfo.CreateText())
                         {
-                            sw.Write(DateTime.Now.ToString("u"));
+                            sw.Write(DateTime.Now.ToString("O"));
                         }
 
                         // Get data for properties
@@ -72,10 +72,8 @@ namespace Seq.Input.MSSql
 
                         while (await dataReader.ReadAsync())
                         {
-                            _logger.Debug("found row");
-
                             var timeStamp = dataReader.GetDateTime(timeStampIndex);
-                            var message = dataReader.GetString(messageIndex);
+                            var message = dataReader.IsDBNull(messageIndex) ? string.Empty : dataReader.GetString(messageIndex);
                             _logger.BindMessageTemplate(message, new object[0], out var messageTemplate, out var boundProperties);
                             var logEvent = new LogEvent(timeStamp, LogEventLevel.Error, null, messageTemplate, boundProperties);
 
