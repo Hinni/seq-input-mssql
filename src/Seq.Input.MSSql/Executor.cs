@@ -55,6 +55,7 @@ namespace Seq.Input.MSSql
                         command.CommandText = queryString;
                         command.CommandType = CommandType.Text;
                         var dataReader = await command.ExecuteReaderAsync();
+                        _logger.Debug(queryString);
 
                         // Write new timestamp to file
                         using (var sw = _fileInfo.CreateText())
@@ -71,6 +72,8 @@ namespace Seq.Input.MSSql
 
                         while (await dataReader.ReadAsync())
                         {
+                            _logger.Debug("found row");
+
                             var timeStamp = dataReader.GetDateTime(timeStampIndex);
                             var message = dataReader.GetString(messageIndex);
                             _logger.BindMessageTemplate(message, new object[0], out var messageTemplate, out var boundProperties);

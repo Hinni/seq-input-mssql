@@ -26,11 +26,11 @@ namespace Seq.Input.MSSql
         public string ServerInstance { get; set; }
 
         [SeqAppSetting(
-            DisplayName = "Database name",
+            DisplayName = "Initial catalog",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "MSSQL database name.")]
-        public string DatabaseName { get; set; }
+            HelpText = "MSSQL ConnectionString InitialCatalog.")]
+        public string InitialCatalog { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Trusted Connection",
@@ -88,7 +88,7 @@ namespace Seq.Input.MSSql
             var stringBuilder = new SqlConnectionStringBuilder()
             {
                 DataSource = ServerInstance,
-                InitialCatalog = DatabaseName
+                InitialCatalog = InitialCatalog
             };
 
             if (IntegratedSecurity)
