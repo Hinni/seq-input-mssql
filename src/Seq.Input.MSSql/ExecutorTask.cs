@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 
-namespace Seq.Input.MSSql
+namespace Seq.Input.MsSql
 {
     public class ExecutorTask : IDisposable
     {

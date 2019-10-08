@@ -5,7 +5,7 @@ using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Compact;
 
-namespace Seq.Input.MSSql
+namespace Seq.Input.MsSql
 {
     public class TextWriterSink : ILogEventSink
     {

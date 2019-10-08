@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 using System.IO;
 using Seq.Apps;
 
-namespace Seq.Input.MSSql
+namespace Seq.Input.MsSql
 {
     [SeqApp("MSSQL Input", AllowReprocessing = false,
         Description = "Ingest events into Seq directly from MSSQL table.")]

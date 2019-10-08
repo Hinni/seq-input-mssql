@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Serilog;
 using Serilog.Events;
 
-namespace Seq.Input.MSSql
+namespace Seq.Input.MsSql
 {
     public class Executor
     {
