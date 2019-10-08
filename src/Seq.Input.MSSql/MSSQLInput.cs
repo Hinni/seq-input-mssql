@@ -78,7 +78,7 @@ namespace Seq.Input.MSSql
 
         public void Stop()
         {
-            _executorTask.Stop();
+            _executorTask?.Stop();
         }
 
         public void Dispose()

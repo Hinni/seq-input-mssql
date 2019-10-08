@@ -21,13 +21,13 @@ namespace Seq.Input.MSSql
             {
                 while (!cancel.IsCancellationRequested)
                 {
-                    executor.Start();
+                    await executor.Start();
                     await Task.Delay(interval, cancel);
                 }
             }
             catch (OperationCanceledException)
             {
-                // Unloading
+                logger.Information("The executor task was canceled.");
             }
             catch (Exception ex)
             {
@@ -37,14 +37,14 @@ namespace Seq.Input.MSSql
 
         public void Stop()
         {
-            _cancel.Cancel();
-            _executorTask.Wait();
+            _cancel?.Cancel();
+            _executorTask?.Wait();
         }
 
         public void Dispose()
         {
-            _cancel.Dispose();
-            _executorTask.Dispose();
+            _cancel?.Dispose();
+            _executorTask?.Dispose();
         }
     }
 }
