@@ -48,7 +48,7 @@ namespace Seq.Input.MSSql
                         if (_fileInfo.Exists)
                         {
                             var dateTime = DateTime.Parse(File.ReadAllText(_fileInfo.FullName));
-                            queryString += $" WHERE {_columnNameTimeStamp} >= '{dateTime:yyyy-mm-dd HH:mm:ss.fff}'";
+                            queryString += $" WHERE {_columnNameTimeStamp} >= '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'";
                         }
 
                         // Create command and execute
