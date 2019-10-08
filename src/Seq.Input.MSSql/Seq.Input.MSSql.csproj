@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <Authors>Hinni Solutions and Contributors</Authors>
