@@ -19,22 +19,36 @@ namespace Seq.Input.MSSql
         public int QueryEverySeconds { get; set; } = 15;
 
         [SeqAppSetting(
-            DisplayName = "Database connection string",
+            DisplayName = "Server instance name",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "MSSQL connection string - don't use TrustedConnection, just SQL credentials.")]
-        public string DatabaseConnectionString { get; set; }
+            HelpText = "MSSQL server instance name.")]
+        public string ServerInstance { get; set; }
+
+        [SeqAppSetting(
+            DisplayName = "Database name",
+            IsOptional = false,
+            InputType = SettingInputType.Text,
+            HelpText = "MSSQL database name.")]
+        public string DatabaseName { get; set; }
+
+        [SeqAppSetting(
+            DisplayName = "Trusted Connection",
+            IsOptional = false,
+            InputType = SettingInputType.Checkbox,
+            HelpText = "Use Windows credentials and not fields below.")]
+        public bool IntegratedSecurity { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Username",
-            IsOptional = false,
+            IsOptional = true,
             InputType = SettingInputType.Text,
             HelpText = "Username for SQL credentials.")]
         public string DatabaseUsername { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Password",
-            IsOptional = false,
+            IsOptional = true,
             InputType = SettingInputType.Password,
             HelpText = "Password for SQL credentials.")]
         public string DatabasePassword { get; set; }
@@ -71,7 +85,22 @@ namespace Seq.Input.MSSql
         {
             var settingsFileInfo = new FileInfo(Path.Combine(App.StoragePath, "lastScan.txt"));
             var query = $"SELECT * FROM {TableOrViewName}";
-            var stringBuilder = new SqlConnectionStringBuilder(DatabaseConnectionString) { UserID = DatabaseUsername, Password = DatabasePassword };
+            var stringBuilder = new SqlConnectionStringBuilder()
+            {
+                DataSource = ServerInstance,
+                InitialCatalog = DatabaseName
+            };
+
+            if (IntegratedSecurity)
+            {
+                stringBuilder.IntegratedSecurity = true;
+            }
+            else
+            {
+                stringBuilder.UserID = DatabaseUsername;
+                stringBuilder.Password = DatabasePassword;
+            }
+
             var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
             _executorTask = new ExecutorTask(Log, TimeSpan.FromSeconds(QueryEverySeconds), executor);
         }
