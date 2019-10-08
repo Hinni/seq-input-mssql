@@ -20,8 +20,9 @@ namespace Seq.Input.MSSql
         private readonly string _columnNameTimeStamp;
         private readonly string _columnNameMessage;
         private readonly string _columnNamesInclude;
+        private readonly string _applicationName;
 
-        public Executor(ILogger logger, TextWriter textWriter, FileInfo fileInfo, string connectionString, string query, string columnNameTimeStamp, string columnNameMessage, string columnNamesInclude)
+        public Executor(ILogger logger, TextWriter textWriter, FileInfo fileInfo, string connectionString, string query, string columnNameTimeStamp, string columnNameMessage, string columnNamesInclude, string applicationName)
         {
             _logger = logger;
             _textWriter = textWriter;
@@ -31,6 +32,7 @@ namespace Seq.Input.MSSql
             _columnNameTimeStamp = columnNameTimeStamp;
             _columnNameMessage = columnNameMessage;
             _columnNamesInclude = columnNamesInclude;
+            _applicationName = applicationName;
         }
 
         public async Task Start()
@@ -49,13 +51,13 @@ namespace Seq.Input.MSSql
                         {
                             var dateTime = DateTime.Parse(File.ReadAllText(_fileInfo.FullName));
                             queryString += $" WHERE {_columnNameTimeStamp} >= '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'";
+                            _logger.Debug("Query new table rows starting at {StartDateTime}", dateTime);
                         }
 
                         // Create command and execute
                         command.CommandText = queryString;
                         command.CommandType = CommandType.Text;
                         var dataReader = await command.ExecuteReaderAsync();
-                        _logger.Debug(queryString);
 
                         // Write new timestamp to file
                         using (var sw = _fileInfo.CreateText())
@@ -87,6 +89,10 @@ namespace Seq.Input.MSSql
                                     }
                                 }
                             }
+
+                            // Add additional properties
+                            _logger.BindProperty("Application", _applicationName, false, out var applicationProperty);
+                            logEvent.AddOrUpdateProperty(applicationProperty);
 
                             // Write LogEvent as Json to text writer
                             var writer = new TextWriterSink(_textWriter);

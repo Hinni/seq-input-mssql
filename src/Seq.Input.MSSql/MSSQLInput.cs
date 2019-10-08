@@ -81,6 +81,13 @@ namespace Seq.Input.MSSql
             HelpText = "Comma separated column name list.")]
         public string ColumnNamesInclude { get; set; }
 
+        [SeqAppSetting(
+            DisplayName = "Log application name as property",
+            IsOptional = true,
+            InputType = SettingInputType.Text,
+            HelpText = "If you like a new additional property to every LogEvent.")]
+        public string ApplicationName { get; set; }
+
         public void Start(TextWriter inputWriter)
         {
             var settingsFileInfo = new FileInfo(Path.Combine(App.StoragePath, "lastScan.txt"));
@@ -101,7 +108,7 @@ namespace Seq.Input.MSSql
                 stringBuilder.Password = DatabasePassword;
             }
 
-            var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude);
+            var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude, ApplicationName);
             _executorTask = new ExecutorTask(Log, TimeSpan.FromSeconds(QueryEverySeconds), executor);
         }
 
