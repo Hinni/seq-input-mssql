@@ -55,7 +55,7 @@ steps:
   inputs:
     command: publish
     configuration: '$(buildConfiguration)'
-    projects: '**/Seq.Input.MsSql.csproj'
+    projects: '**/Seq.Input.MSSql.csproj'
     arguments: '--output .\obj\publish --self-contained'
     publishWebProjects: false
     zipAfterPublish: false
@@ -67,7 +67,7 @@ steps:
   inputs:
     command: pack
     configuration: '$(buildConfiguration)'
-    packagesToPack: '**/Seq.Input.MsSql.csproj'
+    packagesToPack: '**/Seq.Input.MSSql.csproj'
     packDirectory: '$(Build.ArtifactStagingDirectory)\packages'
     buildProperties: 'VersionSuffix=pre-$(Build.BuildNumber)'
 
@@ -84,7 +84,7 @@ steps:
   inputs:
     command: pack
     configuration: '$(buildConfiguration)'
-    packagesToPack: '**/Seq.Input.MsSql.csproj'
+    packagesToPack: '**/Seq.Input.MSSql.csproj'
     packDirectory: '$(Build.ArtifactStagingDirectory)\packages'
 
 - task: NuGetCommand@2
