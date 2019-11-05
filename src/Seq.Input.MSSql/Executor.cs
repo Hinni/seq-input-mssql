@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -17,18 +18,20 @@ namespace Seq.Input.MsSql
         private readonly FileInfo _fileInfo;
         private readonly string _connectionString;
         private readonly string _query;
+        private readonly string _additionalFilterClause;
         private readonly string _columnNameTimeStamp;
         private readonly string _columnNameMessage;
         private readonly string _columnNamesInclude;
         private readonly string _applicationName;
 
-        public Executor(ILogger logger, TextWriter textWriter, FileInfo fileInfo, string connectionString, string query, string columnNameTimeStamp, string columnNameMessage, string columnNamesInclude, string applicationName)
+        public Executor(ILogger logger, TextWriter textWriter, FileInfo fileInfo, string connectionString, string query, string additionalFilterClause, string columnNameTimeStamp, string columnNameMessage, string columnNamesInclude, string applicationName)
         {
             _logger = logger;
             _textWriter = textWriter;
             _fileInfo = fileInfo;
             _connectionString = connectionString;
             _query = query;
+            _additionalFilterClause = additionalFilterClause;
             _columnNameTimeStamp = columnNameTimeStamp;
             _columnNameMessage = columnNameMessage;
             _columnNamesInclude = columnNamesInclude;
@@ -45,14 +48,22 @@ namespace Seq.Input.MsSql
 
                     using (var command = connection.CreateCommand())
                     {
+                        var clauseList = new List<string>();
+
+                        if (!string.IsNullOrEmpty(_additionalFilterClause))
+                        {
+                            clauseList.Add(_additionalFilterClause);
+                        }
+
                         // Get last timestamp from file
-                        var queryString = _query;
                         if (_fileInfo.Exists)
                         {
                             var dateTime = DateTime.Parse(File.ReadAllText(_fileInfo.FullName));
-                            queryString += $" WHERE {_columnNameTimeStamp} >= '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'";
+                            clauseList.Add($"{_columnNameTimeStamp} >= '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'");
                             _logger.Debug("Query new table rows starting at {StartDateTime}", dateTime);
                         }
+
+                        var queryString = _query + CreateWhereClause(clauseList);
 
                         // Create command and execute
                         command.CommandText = queryString;
@@ -105,6 +116,14 @@ namespace Seq.Input.MsSql
             {
                 _logger.Error(ex, "A SQL exception was occured.");
             }
+        }
+
+        private string CreateWhereClause(ICollection<string> clauses)
+        {
+            if (clauses.Count == 0)
+                return string.Empty;
+
+            return $" WHERE {string.Join(" AND ", clauses)}";
         }
     }
 }

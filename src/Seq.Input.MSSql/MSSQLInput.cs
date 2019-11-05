@@ -61,6 +61,13 @@ namespace Seq.Input.MsSql
         public string TableOrViewName { get; set; }
 
         [SeqAppSetting(
+            DisplayName = "Additional filter clause",
+            IsOptional = true,
+            InputType = SettingInputType.Text,
+            HelpText = "Allows to filter some rows.")]
+        public string AdditionalFilterClause { get; set; }
+
+        [SeqAppSetting(
             DisplayName = "Column name of TimeStamp",
             IsOptional = false,
             InputType = SettingInputType.Text,
@@ -108,7 +115,7 @@ namespace Seq.Input.MsSql
                 stringBuilder.Password = DatabasePassword;
             }
 
-            var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude, ApplicationName);
+            var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, AdditionalFilterClause, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude, ApplicationName);
             _executorTask = new ExecutorTask(Log, TimeSpan.FromSeconds(QueryEverySeconds), executor);
         }
 
