@@ -23,8 +23,9 @@ namespace Seq.Input.MsSql
         private readonly string _columnNameMessage;
         private readonly string _columnNamesInclude;
         private readonly string _applicationName;
+        private readonly int _logEventLevel;
 
-        public Executor(ILogger logger, TextWriter textWriter, FileInfo fileInfo, string connectionString, string query, string additionalFilterClause, string columnNameTimeStamp, string columnNameMessage, string columnNamesInclude, string applicationName)
+        public Executor(ILogger logger, TextWriter textWriter, FileInfo fileInfo, string connectionString, string query, string additionalFilterClause, string columnNameTimeStamp, string columnNameMessage, string columnNamesInclude, string applicationName, int logEventLevel)
         {
             _logger = logger;
             _textWriter = textWriter;
@@ -36,6 +37,7 @@ namespace Seq.Input.MsSql
             _columnNameMessage = columnNameMessage;
             _columnNamesInclude = columnNamesInclude;
             _applicationName = applicationName;
+            _logEventLevel = logEventLevel;
         }
 
         public async Task Start()
@@ -88,7 +90,7 @@ namespace Seq.Input.MsSql
                             var timeStamp = dataReader.GetDateTime(timeStampIndex);
                             var message = dataReader.IsDBNull(messageIndex) ? string.Empty : dataReader.GetString(messageIndex);
                             _logger.BindMessageTemplate(message, new object[0], out var messageTemplate, out var boundProperties);
-                            var logEvent = new LogEvent(timeStamp, LogEventLevel.Error, null, messageTemplate, boundProperties);
+                            var logEvent = new LogEvent(timeStamp, (LogEventLevel)Enum.Parse(typeof(LogEventLevel), _logEventLevel.ToString()), null, messageTemplate, boundProperties);
 
                             for (var i = 0; i < dataReader.FieldCount; i++)
                             {

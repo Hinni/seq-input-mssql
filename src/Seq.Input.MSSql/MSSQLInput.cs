@@ -95,6 +95,13 @@ namespace Seq.Input.MsSql
             HelpText = "If you like a new additional property to every LogEvent.")]
         public string ApplicationName { get; set; }
 
+        [SeqAppSetting(
+            DisplayName = "Serilog.Events.LogEventLevel",
+            IsOptional = false,
+            InputType = SettingInputType.Integer,
+            HelpText = "0=Verbose, 1=Debug, 2=Info (Default), 3=Warn, 4=Error, 5=Fatal.")]
+        public int LogEventLevel { get; set; } = 2;
+
         public void Start(TextWriter inputWriter)
         {
             var settingsFileInfo = new FileInfo(Path.Combine(App.StoragePath, "lastScan.txt"));
@@ -115,7 +122,7 @@ namespace Seq.Input.MsSql
                 stringBuilder.Password = DatabasePassword;
             }
 
-            var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, AdditionalFilterClause, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude, ApplicationName);
+            var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, AdditionalFilterClause, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude, ApplicationName, LogEventLevel);
             _executorTask = new ExecutorTask(Log, TimeSpan.FromSeconds(QueryEverySeconds), executor);
         }
 
