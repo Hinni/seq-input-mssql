@@ -2,7 +2,7 @@
 
 [![Build Status](https://dev.azure.com/hinnipipe/Github%20Pipeline/_apis/build/status/Hinni.seq-input-mssql?branchName=master)](https://dev.azure.com/hinnipipe/Github%20Pipeline/_build/latest?definitionId=7&branchName=master)
 [![GitHub release](https://img.shields.io/github/release/Hinni/seq-input-mssql.svg)](https://github.com/Hinni/seq-input-mssql/releases)
-[![NuGet](https://img.shields.io/nuget/v/seq-input-mssql.svg)](https://www.nuget.org/packages/seq-input-mssql/)
+[![NuGet](https://img.shields.io/nuget/v/Seq.Input.MSSql.svg)](https://www.nuget.org/packages/Seq.Input.MSSql/)
 
 A Seq custom input that pulls messages from SQL tables. **Requires Seq 5.1+**
 
