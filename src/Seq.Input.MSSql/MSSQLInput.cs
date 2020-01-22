@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.IO;
 using Seq.Apps;
+using Seq.Input.MSSql;
 
 namespace Seq.Input.MsSql
 {
@@ -130,7 +131,7 @@ namespace Seq.Input.MsSql
                 stringBuilder.Password = DatabasePassword;
             }
 
-            if (TimePeriod != DefaultTimePeriod)
+            if (!TimePeriodHelper.IsStringValid(TimePeriod))
             {
                 Log.Warning("Defined TimePeriod {TimePeriod} is not valid. Use default {DefaultValue}.", TimePeriod, DefaultTimePeriod);
                 TimePeriod = DefaultTimePeriod;

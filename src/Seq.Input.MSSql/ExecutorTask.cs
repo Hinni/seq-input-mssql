@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Seq.Input.MSSql;
 using Serilog;
 
 namespace Seq.Input.MsSql
@@ -21,7 +22,11 @@ namespace Seq.Input.MsSql
             {
                 while (!cancel.IsCancellationRequested)
                 {
-                    await executor.Start();
+                    // In valid time period?
+                    if (TimePeriodHelper.IsValidTimePeriod(DateTime.Now, timePeriod))
+                    {
+                        await executor.Start();
+                    }
                     await Task.Delay(interval, cancel);
                 }
             }
