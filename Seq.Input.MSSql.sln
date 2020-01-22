@@ -5,7 +5,14 @@ VisualStudioVersion = 16.0.29324.140
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Seq.Input.MSSql", "src\Seq.Input.MSSql\Seq.Input.MSSql.csproj", "{3EE268B9-6B6D-464F-859A-D74FA719BB26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Seq.Input.MSSql.Tests", "src\Seq.Input.MSSql.Tests\Seq.Input.MSSql.Tests.csproj", "{DDE34B27-7F18-46F1-B542-8998FF7DE2BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Seq.Input.MSSql.Tests", "src\Seq.Input.MSSql.Tests\Seq.Input.MSSql.Tests.csproj", "{DDE34B27-7F18-46F1-B542-8998FF7DE2BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{C5478040-2E8A-4DA3-B934-93DAFF7B50B3}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		azure-pipelines.yml = azure-pipelines.yml
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
