@@ -36,13 +36,13 @@ steps:
   displayName: 'Use .NET Core sdk'
   inputs:
     packageType: sdk
-    version: 2.1.x
+    version: 2.2.x
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - task: NuGetToolInstaller@0
-  displayName: 'Install NuGet v4.9.x'
+  displayName: 'Install NuGet v4.x'
   inputs:
-    versionSpec: '4.9.x'
+    versionSpec: '4.x'
     checkLatest: false
 
 - task: NuGetCommand@2
