@@ -32,16 +32,17 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: DotNetCoreInstaller@0
-  displayName: 'Install DotNetCore v2.1'
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk'
   inputs:
-    packageType: 'sdk'
-    version: '2.1.x'
+    packageType: sdk
+    version: 2.1.x
+    installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - task: NuGetToolInstaller@0
-  displayName: 'Install NuGet v4.9.3'
+  displayName: 'Install NuGet v4.9.x'
   inputs:
-    versionSpec: '4.9.3'
+    versionSpec: '4.9.x'
     checkLatest: false
 
 - task: NuGetCommand@2
