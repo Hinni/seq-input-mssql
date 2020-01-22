@@ -32,52 +32,16 @@ namespace Seq.Input.MSSql.Tests
             Assert.False(TimePeriodHelper.IsValidTimePeriod(dateTime, timePeriod));
         }
 
-        [Fact]
-        public void IsStringValid_IsValid_Case1()
+        [Theory]
+        [InlineData("00:00-23:59", true)]
+        [InlineData("10:00-11:20", true)]
+        [InlineData("20:00-12:50", true)]
+        [InlineData("23:00-23:00", true)]
+        [InlineData("00:00-00:60", false)]
+        [InlineData("23:0O-23:E0", false)]
+        public void IsStringValid_Test(string timePeriod, bool expectedResult)
         {
-            var timePeriod = "00:00-23:59";
-
-            Assert.True(TimePeriodHelper.IsStringValid(timePeriod));
-        }
-
-        [Fact]
-        public void IsStringValid_IsValid_Case2()
-        {
-            var timePeriod = "10:00-11:20";
-
-            Assert.True(TimePeriodHelper.IsStringValid(timePeriod));
-        }
-
-        [Fact]
-        public void IsStringValid_IsValid_Case3()
-        {
-            var timePeriod = "20:00-12:50";
-
-            Assert.True(TimePeriodHelper.IsStringValid(timePeriod));
-        }
-
-        [Fact]
-        public void IsStringValid_IsValid_Case4()
-        {
-            var timePeriod = "23:00-23:00";
-
-            Assert.True(TimePeriodHelper.IsStringValid(timePeriod));
-        }
-
-        [Fact]
-        public void IsStringValid_IsValid_Case_WrongTime()
-        {
-            var timePeriod = "00:00-00:60";
-
-            Assert.False(TimePeriodHelper.IsStringValid(timePeriod));
-        }
-
-        [Fact]
-        public void IsStringValid_IsValid_Case_WrongCharacter()
-        {
-            var timePeriod = "23:0O-23:E0";
-
-            Assert.False(TimePeriodHelper.IsStringValid(timePeriod));
+            Assert.True(TimePeriodHelper.IsStringValid(timePeriod) == expectedResult);
         }
     }
 }
