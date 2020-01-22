@@ -105,10 +105,10 @@ namespace Seq.Input.MsSql
         public int LogEventLevel { get; set; } = 2;
 
         [SeqAppSetting(
-            DisplayName = "Valid time period",
+            DisplayName = "Valid local time period",
             IsOptional = true,
             InputType = SettingInputType.Text,
-            HelpText = "Time period in which the query is executed, or leave empty. Default (00:00-23:59).")]
+            HelpText = "Local time period in which the query is executed, or leave empty. Default (00:00-23:59).")]
         public string TimePeriod { get; set; } = DefaultTimePeriod;
 
         public void Start(TextWriter inputWriter)
