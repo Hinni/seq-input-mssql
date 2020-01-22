@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Seq.Input.MSSql;
 using Serilog;
 
 namespace Seq.Input.MsSql
@@ -10,18 +11,22 @@ namespace Seq.Input.MsSql
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly Task _executorTask;
 
-        public ExecutorTask(ILogger logger, TimeSpan interval, Executor executor)
+        public ExecutorTask(ILogger logger, TimeSpan interval, string timePeriod, Executor executor)
         {
-            _executorTask = Task.Run(() => Run(logger, interval, executor, _cancel.Token), _cancel.Token);
+            _executorTask = Task.Run(() => Run(logger, interval, timePeriod, executor, _cancel.Token), _cancel.Token);
         }
 
-        private static async Task Run(ILogger logger, TimeSpan interval, Executor executor, CancellationToken cancel)
+        private static async Task Run(ILogger logger, TimeSpan interval, string timePeriod, Executor executor, CancellationToken cancel)
         {
             try
             {
                 while (!cancel.IsCancellationRequested)
                 {
-                    await executor.Start();
+                    // In valid time period?
+                    if (TimePeriodHelper.IsValidTimePeriod(DateTime.Now, timePeriod))
+                    {
+                        await executor.Start();
+                    }
                     await Task.Delay(interval, cancel);
                 }
             }

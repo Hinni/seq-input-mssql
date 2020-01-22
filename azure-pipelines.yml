@@ -24,7 +24,7 @@ pr:
     - README.md
 
 pool:
-  vmImage: 'VS2017-Win2016'
+  vmImage: 'windows-2019'
 
 variables:
   solution: '**/*.sln'
@@ -32,16 +32,17 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: DotNetCoreInstaller@0
-  displayName: 'Install DotNetCore v2.1'
+- task: UseDotNet@2
+  displayName: 'Use .NET Core sdk'
   inputs:
-    packageType: 'sdk'
-    version: '2.1.500'
+    packageType: sdk
+    version: 2.2.x
+    installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - task: NuGetToolInstaller@0
-  displayName: 'Install NuGet v4.9.3'
+  displayName: 'Install NuGet v4.x'
   inputs:
-    versionSpec: '4.9.3'
+    versionSpec: '4.x'
     checkLatest: false
 
 - task: NuGetCommand@2

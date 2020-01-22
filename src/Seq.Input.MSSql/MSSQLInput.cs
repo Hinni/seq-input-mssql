@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.IO;
 using Seq.Apps;
+using Seq.Input.MSSql;
 
 namespace Seq.Input.MsSql
 {
@@ -9,6 +10,7 @@ namespace Seq.Input.MsSql
         Description = "Ingest events into Seq directly from MSSQL table.")]
     public class MSSQLInput : SeqApp, IPublishJson, IDisposable
     {
+        private static readonly string DefaultTimePeriod = "00:00-23:59";
         private ExecutorTask _executorTask;
 
         [SeqAppSetting(
@@ -102,6 +104,13 @@ namespace Seq.Input.MsSql
             HelpText = "0=Verbose, 1=Debug, 2=Info (Default), 3=Warn, 4=Error, 5=Fatal.")]
         public int LogEventLevel { get; set; } = 2;
 
+        [SeqAppSetting(
+            DisplayName = "Valid local time period",
+            IsOptional = true,
+            InputType = SettingInputType.Text,
+            HelpText = "Local time period in which the query is executed, or leave empty. Default (00:00-23:59).")]
+        public string TimePeriod { get; set; } = DefaultTimePeriod;
+
         public void Start(TextWriter inputWriter)
         {
             var settingsFileInfo = new FileInfo(Path.Combine(App.StoragePath, "lastScan.txt"));
@@ -122,8 +131,14 @@ namespace Seq.Input.MsSql
                 stringBuilder.Password = DatabasePassword;
             }
 
+            if (!TimePeriodHelper.IsStringValid(TimePeriod))
+            {
+                Log.Warning("Defined TimePeriod {TimePeriod} is not valid. Use default {DefaultValue}.", TimePeriod, DefaultTimePeriod);
+                TimePeriod = DefaultTimePeriod;
+            }
+
             var executor = new Executor(Log, inputWriter, settingsFileInfo, stringBuilder.ToString(), query, AdditionalFilterClause, ColumnNameTimeStamp, ColumnNameMessage, ColumnNamesInclude, ApplicationName, LogEventLevel);
-            _executorTask = new ExecutorTask(Log, TimeSpan.FromSeconds(QueryEverySeconds), executor);
+            _executorTask = new ExecutorTask(Log, TimeSpan.FromSeconds(QueryEverySeconds), TimePeriod, executor);
         }
 
         public void Stop()

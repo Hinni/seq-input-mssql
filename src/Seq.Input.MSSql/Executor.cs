@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -57,12 +56,16 @@ namespace Seq.Input.MsSql
                             clauseList.Add(_additionalFilterClause);
                         }
 
-                        // Get last timestamp from file
+                        // Get last valid timestamp from file
                         if (_fileInfo.Exists)
                         {
-                            var dateTime = DateTime.Parse(File.ReadAllText(_fileInfo.FullName));
-                            clauseList.Add($"{_columnNameTimeStamp} >= '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'");
-                            _logger.Debug("Query new table rows starting at {StartDateTime}", dateTime);
+                            var content = File.ReadAllText(_fileInfo.FullName).Trim();
+                            if (!string.IsNullOrEmpty(content))
+                            {
+                                var dateTime = DateTime.Parse(content);
+                                clauseList.Add($"{_columnNameTimeStamp} >= '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'");
+                                _logger.Debug("Query new table rows starting at {StartDateTime}", dateTime);
+                            }
                         }
 
                         var queryString = _query + CreateWhereClause(clauseList);
