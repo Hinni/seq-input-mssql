@@ -6,7 +6,7 @@ using Seq.Input.MSSql;
 
 namespace Seq.Input.MsSql
 {
-    [SeqApp("MSSQL Input", AllowReprocessing = false,
+    [SeqApp("MSSQL Input 2", AllowReprocessing = false,
         Description = "Ingest events into Seq directly from MSSQL table.")]
     public class MSSQLInput : SeqApp, IPublishJson, IDisposable
     {
