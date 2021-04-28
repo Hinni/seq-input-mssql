@@ -57,17 +57,40 @@ namespace Seq.Input.MsSql
                             clauseList.Add(_additionalFilterClause);
                         }
 
+                        //Set the current run time, less 1 second, to allow for timestamps that don't measure in milliseconds (such as timestamps calculated from MSDB sysjobhistory)
+                        var runTime = DateTime.Now.AddSeconds(-1);
+                        bool validLastStamp = false;
+                        var dateTime = DateTime.Now;
+
+                        //Ensure we update the state of the file to avoid an infinite loop of event ingestion on first run
+                        _fileInfo.Refresh();
+
                         // Get last valid timestamp from file
                         if (_fileInfo.Exists)
                         {
                             var content = File.ReadAllText(_fileInfo.FullName).Trim();
                             if (!string.IsNullOrEmpty(content))
                             {
-                                var dateTime = DateTime.Parse(content);
-                                clauseList.Add($"{_columnNameTimeStamp} >= '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'");
-                                _logger.Debug("Query new table rows starting at {StartDateTime}", dateTime);
+                                validLastStamp = true;
+                                dateTime = DateTime.Parse(content);
                             }
+                            else
+                                _logger.Debug("lastScan.txt did not contain content");
                         }
+                        else
+                            _logger.Debug("lastScan.txt not found");
+                        
+                        if (!validLastStamp)
+                        {
+                            //Avoid ingesting every event by limiting the query to last day up to current runTime (-1 sec)
+                            dateTime = DateTime.Now.AddDays(-1);
+                            _logger.Debug("Could not determine last scan time - query limited to last day");
+                        }
+
+                        //Only retrieve events that occurs after the last dateTime and up to the current runTime (- 1 sec)
+                        clauseList.Add($"{_columnNameTimeStamp} > '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'");
+                        clauseList.Add($"{_columnNameTimeStamp} <= '{runTime:yyyy-MM-dd HH:mm:ss.fff}'");
+                        _logger.Debug("Query new table rows from {StartDateTime} to {EndDateTime}", dateTime, runTime);
 
                         var queryString = _query + CreateWhereClause(clauseList);
 
@@ -76,12 +99,10 @@ namespace Seq.Input.MsSql
                         command.CommandType = CommandType.Text;
                         var dataReader = await command.ExecuteReaderAsync();
 
-                        // Write new timestamp to file
-                        using (var sw = _fileInfo.CreateText())
-                        {
-                            sw.Write(DateTime.Now.ToString("O"));
-                        }
-
+                        // Write current runTime to file
+                        using (var sw = _fileInfo.CreateText())                        
+                            sw.Write(runTime.ToString("O"));
+                        
                         // Get data for properties
                         var columns = dataReader.GetColumnSchema();
                         var columnNameList = columns.Select(s => s.ColumnName).ToList();
