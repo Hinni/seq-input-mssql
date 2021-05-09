@@ -1,32 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <Authors>Hinni Solutions and Contributors</Authors>
-    <VersionPrefix>1.1.1</VersionPrefix>
+    <VersionPrefix>1.2.0</VersionPrefix>
     <Description>Ingest events into Seq directly from MSSQL table.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright © 2019-2020 Hinni Solutions and Contributors</Copyright>
+    <Copyright>Copyright © 2019-2021 Hinni Solutions and Contributors</Copyright>
     <RepositoryUrl>https://github.com/Hinni/seq-input-mssql</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>seq-app Seq Input MSSQL</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageIconUrl>https://raw.githubusercontent.com/datalust/sqelf/master/asset/seq-input-gelf.png</PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/Hinni/seq-input-mssql/master/src/Seq.Input.MSSql/MSSQL.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/Hinni/seq-input-mssql</PackageProjectUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIcon>MSSQL.png</PackageIcon>
+    <ApplicationIcon>MSSQL.ico</ApplicationIcon>
+    <PackageId>Seq.Input.MSSql</PackageId>
+    <Product>Seq.Input.MSSql</Product>
+    <PackageReleaseNotes>Forked release of Seq.Input.MSSQL to address first run infinite loop and allow for timestamps that don't measure in milliseconds</PackageReleaseNotes>
+    <AssemblyName>Seq.Input.MSSql</AssemblyName>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
+    <None Include="./bin/Release/$(TargetFramework)/win-x64/*.dll" Exclude="./bin/Release/$(TargetFramework)/win-x64/Seq.Input.MsSql.*;./bin/Release/$(TargetFramework)/win-x64/Seq.Apps.dll;./bin/Release/$(TargetFramework)/win-x64/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
     <None Include="./obj/publish/**/*" Exclude="./obj/publish/Seq.Input.MsSql.*;./obj/publish/Seq.Apps.dll;./obj/publish/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
+    <None Include="MSSQL.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Seq.Apps" Version="5.1.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2">
+      <GeneratePathProperty>true</GeneratePathProperty>
+      <Pack>true</Pack>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
