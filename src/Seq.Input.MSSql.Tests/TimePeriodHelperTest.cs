@@ -8,8 +8,8 @@ namespace Seq.Input.MSSql.Tests
         [Fact]
         public void IsValidTimePeriod_IsValid_InRange()
         {
-            var dateTime = new DateTime(2020, 1, 22, 9, 5, 0);
-            var timePeriod = "08:00-22:00";
+            var dateTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 9, 5, 0);
+            const string timePeriod = "08:00-22:00";
 
             Assert.True(TimePeriodHelper.IsValidTimePeriod(dateTime, timePeriod));
         }
@@ -17,8 +17,8 @@ namespace Seq.Input.MSSql.Tests
         [Fact]
         public void IsValidTimePeriod_IsValid_OnPoint()
         {
-            var dateTime = new DateTime(2020, 1, 22, 22, 0, 0);
-            var timePeriod = "10:00-22:00";
+            var dateTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 22, 0, 0);
+            const string timePeriod = "10:00-22:00";
 
             Assert.True(TimePeriodHelper.IsValidTimePeriod(dateTime, timePeriod));
         }
@@ -26,8 +26,8 @@ namespace Seq.Input.MSSql.Tests
         [Fact]
         public void IsValidTimePeriod_IsInValid()
         {
-            var dateTime = new DateTime(2020, 1, 22, 23, 51, 0);
-            var timePeriod = "00:00-23:50";
+            var dateTime = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 23, 51, 0);
+            const string timePeriod = "00:00-23:50";
 
             Assert.False(TimePeriodHelper.IsValidTimePeriod(dateTime, timePeriod));
         }
