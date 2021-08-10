@@ -19,28 +19,30 @@ namespace Seq.Input.MSSql
         public static string AdditionalFilterClause { get; set; }
         public static string ColumnNameTimeStamp { get; set; }
         public static string ColumnNameMessage { get; set; }
-        public static List<string> ColumnNamesInclude { get; set; }
+        public static List<string> ColumnNamesInclude { get; set; } = new List<string>();
         public static string ApplicationName { get; set; }
         public static string ApplicationPropertyName { get; set; }
         public static string ColumnNameEventLevel { get; set; }
-        public static Dictionary<string, LogEventLevel> EventLevelMapping { get; set; }
+
+        public static Dictionary<string, LogEventLevel> EventLevelMapping { get; set; } =
+            new Dictionary<string, LogEventLevel>();
         public static int LogEventLevel { get; set; }
         public static string TimePeriod { get; set; }
-        public static IEnumerable<string> Tags { get; set; }
-        public static Dictionary<string, string> TagMappings { get; set; }
+        public static IEnumerable<string> Tags { get; set; } = new List<string>();
+        public static Dictionary<string, string> TagMappings { get; set; } = new Dictionary<string, string>();
         public static string ColumnNameTags { get; set; }
         public static string ColumnNamePriority { get; set; }
-        public static Dictionary<string, string> PriorityMapping { get; set; }
+        public static Dictionary<string, string> PriorityMapping { get; set; } = new Dictionary<string, string>();
         public static string ColumnNameResponder { get; set; }
-        public static Dictionary<string, string> ResponderMapping { get; set; }
+        public static Dictionary<string, string> ResponderMapping { get; set; } = new Dictionary<string, string>();
         public static string ColumnNameProjectKey { get; set; }
-        public static Dictionary<string, string> ProjectKeyMapping { get; set; }
+        public static Dictionary<string, string> ProjectKeyMapping { get; set; } = new Dictionary<string, string>();
         public static string ColumnNameInitialEstimate { get; set; }
-        public static Dictionary<string, string> InitialEstimateMapping { get; set; }
+        public static Dictionary<string, string> InitialEstimateMapping { get; set; } = new Dictionary<string, string>();
         public static string ColumnNameRemainingEstimate { get; set; }
-        public static Dictionary<string, string> RemainingEstimateMapping { get; set; }
+        public static Dictionary<string, string> RemainingEstimateMapping { get; set; } = new Dictionary<string, string>();
         public static string ColumnNameDueDate { get; set; }
-        public static Dictionary<string, string> DueDateMapping { get; set; }
+        public static Dictionary<string, string> DueDateMapping { get; set; } = new Dictionary<string, string>();
 
         public static bool ParseKeyPairList(string value, out Dictionary<string, string> mappings)
         {
