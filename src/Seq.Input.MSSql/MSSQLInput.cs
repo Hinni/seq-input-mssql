@@ -85,6 +85,14 @@ namespace Seq.Input.MsSql
         public string ColumnNameTimeStamp { get; set; }
 
         [SeqAppSetting(
+            DisplayName = "Seconds delay",
+            IsOptional = false,
+            InputType = SettingInputType.Integer,
+            HelpText =
+                "Seconds to subtract from current time to allow for database rows being inserted late and timestamps that don't measure in milliseconds. Minimum 1, maximum 300, default 1.")]
+        public int? SecondsDelay { get; set; } = 1;
+
+        [SeqAppSetting(
             DisplayName = "Column name of Message.",
             IsOptional = false,
             InputType = SettingInputType.Text,
@@ -310,6 +318,9 @@ namespace Seq.Input.MsSql
             SqlConfig.TableOrViewName = TableOrViewName;
             SqlConfig.AdditionalFilterClause = AdditionalFilterClause;
             SqlConfig.ColumnNameTimeStamp = ColumnNameTimeStamp;
+            if (SecondsDelay == null || SecondsDelay < 1 || SecondsDelay > 300)
+                SecondsDelay = 1;
+            SqlConfig.SecondsDelay = (int)SecondsDelay;
             SqlConfig.ColumnNameMessage = ColumnNameMessage;
             SqlConfig.ColumnNamesInclude = SqlConfig.SplitAndTrim(',', ColumnNamesInclude).ToList();
             SqlConfig.ApplicationName = ApplicationName;

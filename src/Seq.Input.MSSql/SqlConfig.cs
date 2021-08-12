@@ -18,6 +18,7 @@ namespace Seq.Input.MSSql
         public static string TableOrViewName { get; set; }
         public static string AdditionalFilterClause { get; set; }
         public static string ColumnNameTimeStamp { get; set; }
+        public static int SecondsDelay { get; set; }
         public static string ColumnNameMessage { get; set; }
         public static List<string> ColumnNamesInclude { get; set; } = new List<string>();
         public static string ApplicationName { get; set; }

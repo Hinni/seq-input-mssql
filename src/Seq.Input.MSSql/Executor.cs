@@ -44,8 +44,8 @@ namespace Seq.Input.MsSql
                         if (!string.IsNullOrEmpty(SqlConfig.AdditionalFilterClause))
                             clauseList.Add(SqlConfig.AdditionalFilterClause);
 
-                        //Set the current run time, less 1 second, to allow for timestamps that don't measure in milliseconds (such as timestamps calculated from MSDB sysjobhistory)
-                        var runTime = DateTime.Now.AddSeconds(-1);
+                        //Set the current run time, less SecondsDelay, to allow for late-running rows or timestamps that don't measure in milliseconds (such as timestamps calculated from MSDB sysjobhistory)
+                        var runTime = DateTime.Now.AddSeconds(-SqlConfig.SecondsDelay);
                         var validLastStamp = false;
                         var dateTime = DateTime.Now;
 
@@ -77,6 +77,10 @@ namespace Seq.Input.MsSql
                             dateTime = DateTime.Now.AddDays(-1);
                             _logger.Debug("Could not determine last scan time - query limited to last day");
                         }
+
+                        //In case SecondsDelay is changed and we now would have an invalid query, adjust dateTime
+                        if (dateTime < runTime)
+                            dateTime = runTime.AddSeconds(-SqlConfig.SecondsDelay);
 
                         //Only retrieve events that occurs after the last dateTime and up to the current runTime (- 1 sec)
                         clauseList.Add($"{SqlConfig.ColumnNameTimeStamp} > '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'");
