@@ -86,7 +86,7 @@ namespace Seq.Input.MsSql
 
         [SeqAppSetting(
             DisplayName = "Seconds delay",
-            IsOptional = false,
+            IsOptional = true,
             InputType = SettingInputType.Integer,
             HelpText =
                 "Seconds to subtract from current time to allow for database rows being inserted late and timestamps that don't measure in milliseconds. Minimum 1, maximum 300, default 1.")]
