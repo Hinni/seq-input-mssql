@@ -79,7 +79,7 @@ namespace Seq.Input.MsSql
                         }
 
                         //In case SecondsDelay is changed and we now would have an invalid query, adjust dateTime
-                        if (dateTime < runTime)
+                        if (dateTime >= runTime)
                             dateTime = runTime.AddSeconds(-SqlConfig.SecondsDelay);
 
                         //Only retrieve events that occurs after the last dateTime and up to the current runTime (- 1 sec)
