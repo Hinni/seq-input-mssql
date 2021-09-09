@@ -20,16 +20,17 @@ namespace Seq.Input.MSSql.Tests
 
         [Theory]
         [InlineData("Severe", "Highest", true)]
-        [InlineData("Critical", "High", true)]
-        [InlineData("High", "Medium", true)]
-        [InlineData("Medium", "Low", true)]
-        [InlineData("Low", "Lowest", true)]
+        [InlineData("Critical", "High", false)]
+        [InlineData("High", "High", true)]
+        [InlineData("Medium", "Medium", true)]
+        [InlineData("Low", "Low", true)]
         [InlineData("Not Yet Classified", "Low", true)]
         [InlineData("Quack", "", false)]
         public void IsPriorityMapping(string priority, string expected, bool willParse)
         {
             Log.Logger = new LoggerConfiguration().CreateLogger();
-            SqlConfig.ParseKeyPairList("Severe=Highest,Critical=High,High=Medium,Medium=Low,Low=Lowest,Not Yet Classified=Low",
+            SqlConfig.ParseKeyPairList(//"Severe=Highest,High=High,Medium=Medium,Low=Low,Not Yet Classified=Low",
+                                       "Severe=Highest,High=High,Medium=Medium,Low=Low,Not Yet Classified=Low",
                 out var keyMappings);
             Assert.True(TryGetPropertyValueCI(keyMappings, priority, out var priorityValue) == willParse);
             _testOutputHelper.WriteLine("Priority value passed: {0}, Mapped: {1}", priority, priorityValue);

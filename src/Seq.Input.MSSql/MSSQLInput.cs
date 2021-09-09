@@ -362,6 +362,7 @@ namespace Seq.Input.MsSql
 
             SqlConfig.ColumnNameTags = ColumnNameTags;
             Log.Debug("Column for Tags: {ColumnTags}", SqlConfig.ColumnNameTags);
+
             SqlConfig.ColumnNamePriority = ColumnNamePriority;
             Log.Debug("Column for Priority: {ColumnPriority}", SqlConfig.ColumnNamePriority);
             if (SqlConfig.ParseKeyPairList(PriorityMapping, out var priorityMappings))
@@ -371,7 +372,7 @@ namespace Seq.Input.MsSql
             }
 
             SqlConfig.ColumnNameResponder = ColumnNameResponder;
-            Log.Debug("Column for Responder: {ColumnResponder}", SqlConfig.ColumnNamePriority);
+            Log.Debug("Column for Responder: {ColumnResponder}", SqlConfig.ColumnNameResponder);
             if (SqlConfig.ParseKeyPairList(ResponderMapping, out var responderMappings))
             {
                 SqlConfig.ResponderMapping = responderMappings;
@@ -391,7 +392,7 @@ namespace Seq.Input.MsSql
             if (SqlConfig.ParseKeyPairList(InitialEstimateMapping, out var initialEstimateMappings))
             {
                 SqlConfig.InitialEstimateMapping = initialEstimateMappings;
-                Log.Debug("Initial Estimate Mappings: {InitialEstimateMappings}", SqlConfig.ResponderMapping);
+                Log.Debug("Initial Estimate Mappings: {InitialEstimateMappings}", SqlConfig.InitialEstimateMapping);
             }
 
             SqlConfig.ColumnNameRemainingEstimate = ColumnNameRemainingEstimate;

@@ -57,7 +57,7 @@ namespace Seq.Input.MSSql
                 mappings.Add(kv[0], kv[1]);
             }
 
-            return false;
+            return true;
         }
 
         public static bool ParseEventKeyPairList(string value, out Dictionary<string, LogEventLevel> mappings)
@@ -72,7 +72,7 @@ namespace Seq.Input.MSSql
                 mappings.Add(kv[0], level);
             }
 
-            return false;
+            return true;
         }
 
         public static bool IsKeyPairList(string value)
