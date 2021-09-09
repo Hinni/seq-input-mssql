@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Seq.Apps;
 using Seq.Input.MSSql;
+using Serilog.Events;
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
@@ -310,49 +311,104 @@ namespace Seq.Input.MsSql
         {
             //Populate SqlConfig when the instance starts
             SqlConfig.QueryEverySeconds = QueryEverySeconds;
+            Log.Debug("Query seconds: {QuerySeconds}", SqlConfig.QueryEverySeconds);
             SqlConfig.ServerInstance = ServerInstance;
+            Log.Debug("SQL Server instance: {SqlInstance}", SqlConfig.ServerInstance);
             SqlConfig.InitialCatalog = InitialCatalog;
+            Log.Debug("Initial Catalog: {InitialCatalog}", SqlConfig.InitialCatalog);
             SqlConfig.IntegratedSecurity = IntegratedSecurity;
+            Log.Debug("Use integrated security: {IntegratedSecurity}", SqlConfig.IntegratedSecurity);
             SqlConfig.DatabaseUsername = DatabaseUsername;
             SqlConfig.DatabasePassword = DatabasePassword;
             SqlConfig.TableOrViewName = TableOrViewName;
+            Log.Debug("Table or view to query: {TableOrView}", SqlConfig.TableOrViewName);
             SqlConfig.AdditionalFilterClause = AdditionalFilterClause;
+            Log.Debug("Additional filter: {Filter}", SqlConfig.AdditionalFilterClause);
             SqlConfig.ColumnNameTimeStamp = ColumnNameTimeStamp;
+            Log.Debug("Column for Timestamp: {ColumnTimestamp}", SqlConfig.ColumnNameTimeStamp);
             if (SecondsDelay == null || SecondsDelay < 1 || SecondsDelay > 300)
                 SecondsDelay = 1;
             SqlConfig.SecondsDelay = (int)SecondsDelay;
+            Log.Debug("Seconds Delay Config: {SecondsDelay}, will delay query by {SecondsDelayActual}", SecondsDelay, SqlConfig.SecondsDelay);
             SqlConfig.ColumnNameMessage = ColumnNameMessage;
+            Log.Debug("Column for Message: {ColumnMessage}", SqlConfig.ColumnNameMessage);
             SqlConfig.ColumnNamesInclude = SqlConfig.SplitAndTrim(',', ColumnNamesInclude).ToList();
+            Log.Debug("Columns to include: {ColumnNames}", SqlConfig.ColumnNamesInclude);
             SqlConfig.ApplicationName = ApplicationName;
             SqlConfig.ApplicationPropertyName = ApplicationPropertyName;
+            Log.Debug("Application Property Name: {AppPropertyName}, App Name: {AppName}", SqlConfig.ApplicationPropertyName, SqlConfig.ApplicationName);
             SqlConfig.ColumnNameEventLevel = ColumnNameEventLevel;
+            Log.Debug("Column for Event Level: {ColumnEventLevel}", ColumnNameEventLevel);
             if (SqlConfig.ParseEventKeyPairList(EventLevelMapping, out var eventLevelMappings))
+            {
                 SqlConfig.EventLevelMapping = eventLevelMappings;
+                Log.Debug("Event level mappings: {LevelMappings}", SqlConfig.EventLevelMapping);
+            }
+
             SqlConfig.LogEventLevel = LogEventLevel;
+            Log.Debug("Event level / Default event level: {EventLevel}", (LogEventLevel)SqlConfig.LogEventLevel);
             SqlConfig.TimePeriod = TimePeriod;
+            Log.Debug("Time Period: {TimePeriod}", SqlConfig.TimePeriod);
             if (SqlConfig.IsKeyPairList(Tags) && SqlConfig.ParseKeyPairList(Tags, out var tagMappings))
+            {
                 SqlConfig.TagMappings = tagMappings;
+                Log.Debug("Tag mappings: {TagMappings}", SqlConfig.TagMappings);
+            }
             else if (SqlConfig.IsValue(Tags))
+            {
                 SqlConfig.Tags = SqlConfig.SplitAndTrim(',', Tags);
+                Log.Debug("Tags: {Tags}", SqlConfig.Tags);
+            }
+
             SqlConfig.ColumnNameTags = ColumnNameTags;
+            Log.Debug("Column for Tags: {ColumnTags}", SqlConfig.ColumnNameTags);
             SqlConfig.ColumnNamePriority = ColumnNamePriority;
+            Log.Debug("Column for Priority: {ColumnPriority}", SqlConfig.ColumnNamePriority);
             if (SqlConfig.ParseKeyPairList(PriorityMapping, out var priorityMappings))
+            {
                 SqlConfig.PriorityMapping = priorityMappings;
+                Log.Debug("Priority Mappings: {PriorityMappings}", SqlConfig.PriorityMapping);
+            }
+
             SqlConfig.ColumnNameResponder = ColumnNameResponder;
+            Log.Debug("Column for Responder: {ColumnResponder}", SqlConfig.ColumnNamePriority);
             if (SqlConfig.ParseKeyPairList(ResponderMapping, out var responderMappings))
+            {
                 SqlConfig.ResponderMapping = responderMappings;
+                Log.Debug("Responder Mappings: {ResponderMappings}", SqlConfig.ResponderMapping);
+            }
+
             SqlConfig.ColumnNameProjectKey = ColumnNameProjectKey;
+            Log.Debug("Column for Project Key: {ColumnProjectKey}", SqlConfig.ColumnNameProjectKey);
             if (SqlConfig.ParseKeyPairList(ProjectKeyMapping, out var projectKeyMappings))
+            {
                 SqlConfig.ProjectKeyMapping = projectKeyMappings;
+                Log.Debug("Project Key Mappings: {ProjectKeyMappings}", SqlConfig.ProjectKeyMapping);
+            }
+
             SqlConfig.ColumnNameInitialEstimate = ColumnNameInitialEstimate;
+            Log.Debug("Column for Initial Estimate: {ColumnInitialEstimate}", SqlConfig.ColumnNameInitialEstimate);
             if (SqlConfig.ParseKeyPairList(InitialEstimateMapping, out var initialEstimateMappings))
+            {
                 SqlConfig.InitialEstimateMapping = initialEstimateMappings;
+                Log.Debug("Initial Estimate Mappings: {InitialEstimateMappings}", SqlConfig.ResponderMapping);
+            }
+
             SqlConfig.ColumnNameRemainingEstimate = ColumnNameRemainingEstimate;
+            Log.Debug("Column for Remaining Estimate: {ColumnRemainingEstimate}", SqlConfig.ColumnNameRemainingEstimate);
             if (SqlConfig.ParseKeyPairList(RemainingEstimateMapping, out var remainingEstimateMappings))
+            {
                 SqlConfig.RemainingEstimateMapping = remainingEstimateMappings;
+                Log.Debug("Remaining Estimate Mappings: {RemainingEstimateMappings}", SqlConfig.RemainingEstimateMapping);
+            }
+
             SqlConfig.ColumnNameDueDate = ColumnNameDueDate;
+            Log.Debug("Column for Due Date: {ColumnDueDate}", SqlConfig.ColumnNameDueDate);
             if (SqlConfig.ParseKeyPairList(DueDateMapping, out var dueDateMappings))
+            {
                 SqlConfig.DueDateMapping = dueDateMappings;
+                Log.Debug("Due Date Mappings: {DueDateMappings}", SqlConfig.DueDateMapping);
+            }
         }
     }
 }
