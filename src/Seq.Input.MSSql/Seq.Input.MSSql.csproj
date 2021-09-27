@@ -6,7 +6,7 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <Authors>Hinni Solutions and Contributors</Authors>
-    <VersionPrefix>1.1.1</VersionPrefix>
+    <VersionPrefix>1.2.0</VersionPrefix>
     <Description>Ingest events into Seq directly from MSSQL table.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Copyright>Copyright © 2019-2021 Hinni Solutions and Contributors</Copyright>
@@ -16,7 +16,6 @@
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIconUrl></PackageIconUrl>
     <PackageProjectUrl>https://github.com/Hinni/seq-input-mssql</PackageProjectUrl>
-    <Version>1.1.9</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>MSSQL.png</PackageIcon>
     <ApplicationIcon>MSSQL.ico</ApplicationIcon>
