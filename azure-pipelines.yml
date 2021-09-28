@@ -72,10 +72,11 @@ steps:
     packDirectory: '$(Build.ArtifactStagingDirectory)\packages'
     buildProperties: 'VersionSuffix=pre-$(Build.BuildNumber)'
 
-- task: PublishPipelineArtifact@0
+- task: PublishPipelineArtifact@1
   displayName: 'Publish prerelease NuGet to Pipeline Artifact'
   condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'), in(variables['Build.Reason'], 'PullRequest'))
   inputs:
+    artifactType: pipeline
     artifactName: 'packages'
     targetPath: '$(Build.ArtifactStagingDirectory)\packages'
 
