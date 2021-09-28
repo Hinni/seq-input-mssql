@@ -25,6 +25,11 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
     <None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="" />
