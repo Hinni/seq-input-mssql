@@ -10,7 +10,7 @@
     <Description>Ingest events into Seq directly from MSSQL table.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Copyright>Copyright © 2019-2021 Hinni Solutions and Contributors</Copyright>
-    <RepositoryUrl>https://github.com/Hinni/seq-input-mssql</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Hinni/seq-input-mssql.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>seq-app Seq Input MSSQL</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
