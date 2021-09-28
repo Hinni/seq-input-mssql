@@ -82,7 +82,7 @@ steps:
     packDirectory: '$(Build.ArtifactStagingDirectory)\packages'
 
 - task: PublishPipelineArtifact@1
-  displayName: 'Publish prerelease NuGet to Pipeline Artifact'
+  displayName: 'Publish packages to Pipeline Artifact'
   condition: succeeded()
   inputs:
     artifactType: pipeline
