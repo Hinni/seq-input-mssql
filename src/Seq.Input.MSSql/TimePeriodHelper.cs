@@ -14,8 +14,7 @@ namespace Seq.Input.MSSql
 
             var dateTimeStart = today.AddHours(double.Parse(start.First())).AddMinutes(double.Parse(start.Last()));
             var dateTimeEnd = today.AddHours(double.Parse(end.First())).AddMinutes(double.Parse(end.Last()));
-
-            return (dateTime >= dateTimeStart && dateTime <= dateTimeEnd);
+            return dateTime >= dateTimeStart && dateTime <= dateTimeEnd;
         }
 
         public static bool IsStringValid(string timePeriod)
