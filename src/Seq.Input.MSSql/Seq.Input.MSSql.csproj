@@ -14,7 +14,6 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>seq-app Seq Input MSSQL</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageIconUrl></PackageIconUrl>
     <PackageProjectUrl>https://github.com/Hinni/seq-input-mssql</PackageProjectUrl>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>MSSQL.png</PackageIcon>
