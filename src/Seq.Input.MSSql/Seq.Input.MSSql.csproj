@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="" />
     <None Include="$(OutDir)/**/*.dll" Exclude="$(OutDir)/$(MSBuildProjectName).dll;$(OutDir)/Seq.Apps.dll;$(OutDir)/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
     <!--<None Include="./bin/Release/$(TargetFramework)/win-x64/*.dll" Exclude="./bin/Release/$(TargetFramework)/win-x64/Seq.Input.MsSql2.*;./bin/Release/$(TargetFramework)/win-x64/Seq.Apps.dll;./bin/Release/$(TargetFramework)/win-x64/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
     <None Include="./obj/publish/**/*" Exclude="./obj/publish/Seq.Input.MsSql2.*;./obj/publish/Seq.Apps.dll;./obj/publish/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />-->
