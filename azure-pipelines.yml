@@ -39,10 +39,10 @@ steps:
     version: 3.1.x
     installationPath: $(Agent.ToolsDirectory)/dotnet
 
-- task: NuGetToolInstaller@0
-  displayName: 'Install NuGet v4.x'
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet v5.x'
   inputs:
-    versionSpec: '4.x'
+    versionSpec: '5.x'
     checkLatest: false
 
 - task: NuGetCommand@2
@@ -72,14 +72,6 @@ steps:
     packDirectory: '$(Build.ArtifactStagingDirectory)\packages'
     buildProperties: 'VersionSuffix=pre-$(Build.BuildNumber)'
 
-- task: PublishPipelineArtifact@1
-  displayName: 'Publish prerelease NuGet to Pipeline Artifact'
-  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'), in(variables['Build.Reason'], 'PullRequest'))
-  inputs:
-    artifactType: pipeline
-    artifactName: 'packages'
-    targetPath: '$(Build.ArtifactStagingDirectory)\packages'
-
 - task: DotNetCoreCLI@2
   displayName: 'Pack official NuGet from master'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
@@ -89,11 +81,10 @@ steps:
     packagesToPack: '**/Seq.Input.MSSql.csproj'
     packDirectory: '$(Build.ArtifactStagingDirectory)\packages'
 
-- task: NuGetCommand@2
-  displayName: 'Push NuGet as official release from master'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish prerelease NuGet to Pipeline Artifact'
+  condition: succeeded()
   inputs:
-    command: push
-    packagesToPush: '$(Build.ArtifactStagingDirectory)\packages\*.nupkg'
-    nuGetFeedType: external
-    publishFeedCredentials: '$(nuget.credentials)'
+    artifactType: pipeline
+    artifactName: 'packages'
+    targetPath: '$(Build.ArtifactStagingDirectory)\packages'
