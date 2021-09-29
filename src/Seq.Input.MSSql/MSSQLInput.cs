@@ -13,7 +13,7 @@ using Serilog.Events;
 
 namespace Seq.Input.MsSql
 {
-    [SeqApp("MSSQL Input 2", AllowReprocessing = false,
+    [SeqApp("MSSQL Input", AllowReprocessing = false,
         Description = "Ingest events into Seq directly from MSSQL table.")]
     // ReSharper disable once InconsistentNaming
     public class MSSQLInput : SeqApp, IPublishJson, IDisposable
