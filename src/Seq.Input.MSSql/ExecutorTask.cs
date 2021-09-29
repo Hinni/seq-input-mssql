@@ -16,17 +16,21 @@ namespace Seq.Input.MsSql
             _executorTask = Task.Run(() => Run(logger, interval, timePeriod, executor, _cancel.Token), _cancel.Token);
         }
 
-        private static async Task Run(ILogger logger, TimeSpan interval, string timePeriod, Executor executor, CancellationToken cancel)
+        public void Dispose()
+        {
+            _cancel?.Dispose();
+            _executorTask?.Dispose();
+        }
+
+        private static async Task Run(ILogger logger, TimeSpan interval, string timePeriod, Executor executor,
+            CancellationToken cancel)
         {
             try
             {
                 while (!cancel.IsCancellationRequested)
                 {
                     // In valid time period?
-                    if (TimePeriodHelper.IsValidTimePeriod(DateTime.Now, timePeriod))
-                    {
-                        await executor.Start();
-                    }
+                    if (TimePeriodHelper.IsValidTimePeriod(DateTime.Now, timePeriod)) await executor.Start();
                     await Task.Delay(interval, cancel);
                 }
             }
@@ -44,12 +48,6 @@ namespace Seq.Input.MsSql
         {
             _cancel?.Cancel();
             _executorTask?.Wait();
-        }
-
-        public void Dispose()
-        {
-            _cancel?.Dispose();
-            _executorTask?.Dispose();
         }
     }
 }
