@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <Authors>Hinni Solutions and Contributors</Authors>
@@ -25,12 +25,14 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
-    <None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="" />
     <None Include="$(OutDir)/**/*.dll" Exclude="$(OutDir)/$(MSBuildProjectName).dll;$(OutDir)/Seq.Apps.dll;$(OutDir)/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
-    <!--<None Include="./bin/Release/$(TargetFramework)/win-x64/*.dll" Exclude="./bin/Release/$(TargetFramework)/win-x64/Seq.Input.MsSql2.*;./bin/Release/$(TargetFramework)/win-x64/Seq.Apps.dll;./bin/Release/$(TargetFramework)/win-x64/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
-    <None Include="./obj/publish/**/*" Exclude="./obj/publish/Seq.Input.MsSql2.*;./obj/publish/Seq.Apps.dll;./obj/publish/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />-->
     <None Include="MSSQL.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -38,9 +40,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
     <PackageReference Include="Seq.Apps" Version="5.1.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
 
 </Project>
