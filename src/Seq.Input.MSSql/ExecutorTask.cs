@@ -30,7 +30,15 @@ namespace Seq.Input.MsSql
                 while (!cancel.IsCancellationRequested)
                 {
                     // In valid time period?
-                    if (TimePeriodHelper.IsValidTimePeriod(DateTime.Now, timePeriod)) await executor.Start();
+                    Interlocked.CompareExchange(ref SqlConfig.SqlLockState, SqlConfig.Locked, SqlConfig.Available);
+                    if (TimePeriodHelper.IsValidTimePeriod(DateTime.Now, timePeriod) &&
+                        SqlConfig.SqlLockState == SqlConfig.Available)
+                    {
+                        logger.Debug("Executing scheduled SQL query ...");
+                        await executor.Start();
+                    }
+
+                    Interlocked.CompareExchange(ref SqlConfig.SqlLockState, SqlConfig.Available, SqlConfig.Locked);
                     await Task.Delay(interval, cancel);
                 }
             }
