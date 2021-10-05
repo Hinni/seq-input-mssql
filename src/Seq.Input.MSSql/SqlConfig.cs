@@ -9,6 +9,10 @@ namespace Seq.Input.MSSql
 {
     public static class SqlConfig
     {
+        public const int Available = 0;
+        public const int Locked = 1;
+        public static int SqlLockState;
+
         public static int QueryEverySeconds { get; set; }
         public static string ServerInstance { get; set; }
         public static int ConnectTimeout { get; set; }

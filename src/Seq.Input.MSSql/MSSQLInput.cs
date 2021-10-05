@@ -38,28 +38,28 @@ namespace Seq.Input.MsSql
         [SeqAppSetting(
             DisplayName = "SQL connect timeout",
             IsOptional = true,
-            InputType = SettingInputType.Text,
-            HelpText = "Connect timeout in seconds, default 15.")]
+            InputType = SettingInputType.Integer,
+            HelpText = "Connect timeout in seconds, default 15, maximum 120.")]
         public int? ConnectTimeout { get; set; } = 15;
 
         [SeqAppSetting(
             DisplayName = "SQL query timeout",
             IsOptional = true,
-            InputType = SettingInputType.Text,
-            HelpText = "Query timeout in seconds, default 60.")]
+            InputType = SettingInputType.Integer,
+            HelpText = "Query timeout in seconds, default 60, maximum 300.")]
         public int? CommandTimeout { get; set; } = 60;
 
         [SeqAppSetting(
             DisplayName = "Encrypted connection",
             IsOptional = true,
-            InputType = SettingInputType.Text,
+            InputType = SettingInputType.Checkbox,
             HelpText = "Use encryption on this connection.")]
         public bool? Encrypt { get; set; }
 
         [SeqAppSetting(
             DisplayName = "Trust server certificate",
             IsOptional = true,
-            InputType = SettingInputType.Text,
+            InputType = SettingInputType.Checkbox,
             HelpText = "If encryption is used, optionally check this box to trust any certificate presented.")]
         public bool? TrustCertificate { get; set; }
 
@@ -309,7 +309,7 @@ namespace Seq.Input.MsSql
                 InitialCatalog = SqlConfig.ServerInstance,
                 ConnectTimeout = SqlConfig.ConnectTimeout,
                 CommandTimeout = SqlConfig.CommandTimeout,
-                ApplicationName = SqlConfig.ApplicationName,
+                ApplicationName = SqlConfig.ApplicationName
             };
 
             if (SqlConfig.Encrypt)
