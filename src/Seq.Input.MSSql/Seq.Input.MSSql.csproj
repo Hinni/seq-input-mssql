@@ -23,6 +23,7 @@
     <PackageReleaseNotes>Update Seq.Input.MSSQL to provide structured properties for interoperability with other apps such as Seq.App.OpsGenie and Seq.App.Atlassian.Jira</PackageReleaseNotes>
     <AssemblyName>Seq.Input.MSSql</AssemblyName>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <Version>1.2.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
