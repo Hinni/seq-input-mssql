@@ -11,7 +11,8 @@ namespace Seq.Input.MSSql
     {
         public const int Available = 0;
         public const int Locked = 1;
-        public static int SqlLockState;
+
+        public static bool Debug { get; set; }
 
         public static int QueryEverySeconds { get; set; }
         public static string ServerInstance { get; set; }

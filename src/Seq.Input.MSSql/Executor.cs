@@ -5,7 +5,6 @@ using System.Data.Common;
 using Microsoft.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Seq.Input.MSSql;
 using Serilog;
@@ -64,19 +63,22 @@ namespace Seq.Input.MsSql
                             }
                             else
                             {
-                                _logger.Debug("lastScan.txt did not contain content");
+                                if (SqlConfig.Debug)
+                                    _logger.Debug("lastScan.txt did not contain content");
                             }
                         }
                         else
                         {
-                            _logger.Debug("lastScan.txt not found");
+                            if (SqlConfig.Debug)
+                                _logger.Debug("lastScan.txt not found");
                         }
 
                         if (!validLastStamp)
                         {
                             //Avoid ingesting every event by limiting the query to last day up to current runTime (-1 sec)
                             dateTime = DateTime.Now.AddDays(-1);
-                            _logger.Debug("Could not determine last scan time - query limited to last day");
+                            if (SqlConfig.Debug)
+                                _logger.Debug("Could not determine last scan time - query limited to last day");
                         }
 
                         //In case SecondsDelay is changed and we now would have an invalid query, adjust dateTime
@@ -86,10 +88,16 @@ namespace Seq.Input.MsSql
                         //Only retrieve events that occurs after the last dateTime and up to the current runTime (- 1 sec)
                         clauseList.Add($"{SqlConfig.ColumnNameTimeStamp} > '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'");
                         clauseList.Add($"{SqlConfig.ColumnNameTimeStamp} <= '{runTime:yyyy-MM-dd HH:mm:ss.fff}'");
-                        _logger.Debug("Query new table rows from {StartDateTime} to {EndDateTime}", dateTime,
-                            runTime);
 
                         var queryString = _query + CreateWhereClause(clauseList);
+                        if (SqlConfig.Debug)
+                            _logger.ForContext("ConnectionString", _connectionString)
+                                .ForContext("QueryString", queryString).Debug(
+                                    "Query new table rows from {StartDateTime} to {EndDateTime}", dateTime,
+                                    runTime);
+                        else
+                            _logger.Debug("Query new table rows from {StartDateTime} to {EndDateTime}", dateTime,
+                                runTime);
 
                         // Create command and execute
                         command.CommandText = queryString;
