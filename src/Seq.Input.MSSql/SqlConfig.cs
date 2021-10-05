@@ -11,6 +11,10 @@ namespace Seq.Input.MSSql
     {
         public static int QueryEverySeconds { get; set; }
         public static string ServerInstance { get; set; }
+        public static int ConnectTimeout { get; set; }
+        public static int CommandTimeout { get; set; }
+        public static bool Encrypt { get; set; }
+        public static bool TrustCertificate { get; set; }
         public static string InitialCatalog { get; set; }
         public static bool IntegratedSecurity { get; set; }
         public static string DatabaseUsername { get; set; }

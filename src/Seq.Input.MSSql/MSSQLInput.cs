@@ -36,6 +36,34 @@ namespace Seq.Input.MsSql
         public string ServerInstance { get; set; }
 
         [SeqAppSetting(
+            DisplayName = "SQL connect timeout",
+            IsOptional = true,
+            InputType = SettingInputType.Text,
+            HelpText = "Connect timeout in seconds, default 15.")]
+        public int? ConnectTimeout { get; set; } = 15;
+
+        [SeqAppSetting(
+            DisplayName = "SQL query timeout",
+            IsOptional = true,
+            InputType = SettingInputType.Text,
+            HelpText = "Query timeout in seconds, default 60.")]
+        public int? CommandTimeout { get; set; } = 60;
+
+        [SeqAppSetting(
+            DisplayName = "Encrypted connection",
+            IsOptional = true,
+            InputType = SettingInputType.Text,
+            HelpText = "Use encryption on this connection.")]
+        public bool? Encrypt { get; set; }
+
+        [SeqAppSetting(
+            DisplayName = "Trust server certificate",
+            IsOptional = true,
+            InputType = SettingInputType.Text,
+            HelpText = "If encryption is used, optionally check this box to trust any certificate presented.")]
+        public bool? TrustCertificate { get; set; }
+
+        [SeqAppSetting(
             DisplayName = "Initial catalog",
             IsOptional = false,
             InputType = SettingInputType.Text,
@@ -277,11 +305,20 @@ namespace Seq.Input.MsSql
             var query = $"SELECT * FROM {TableOrViewName}";
             var stringBuilder = new SqlConnectionStringBuilder
             {
-                DataSource = ServerInstance,
-                InitialCatalog = InitialCatalog
+                DataSource = SqlConfig.ServerInstance,
+                InitialCatalog = SqlConfig.ServerInstance,
+                ConnectTimeout = SqlConfig.ConnectTimeout,
+                CommandTimeout = SqlConfig.CommandTimeout,
+                ApplicationName = SqlConfig.ApplicationName,
             };
 
-            if (IntegratedSecurity)
+            if (SqlConfig.Encrypt)
+            {
+                stringBuilder.Encrypt = SqlConfig.Encrypt;
+                stringBuilder.TrustServerCertificate = SqlConfig.TrustCertificate;
+            }
+
+            if (SqlConfig.IntegratedSecurity)
             {
                 stringBuilder.IntegratedSecurity = true;
             }
@@ -314,6 +351,18 @@ namespace Seq.Input.MsSql
             Log.Debug("Query seconds: {QuerySeconds}", SqlConfig.QueryEverySeconds);
             SqlConfig.ServerInstance = ServerInstance;
             Log.Debug("SQL Server instance: {SqlInstance}", SqlConfig.ServerInstance);
+            if (ConnectTimeout == null || ConnectTimeout < 1 || ConnectTimeout > 120)
+                ConnectTimeout = 15;
+            SqlConfig.ConnectTimeout = (int)ConnectTimeout;
+            Log.Debug("SQL Connect Timeout: {ConnectTimeout}", SqlConfig.ConnectTimeout);
+            if (CommandTimeout == null || CommandTimeout < 1 || CommandTimeout > 300)
+                CommandTimeout = 60;
+            SqlConfig.CommandTimeout = (int)CommandTimeout;
+            Log.Debug("SQL Query Timeout: {CommandTimeout}", SqlConfig.CommandTimeout);
+            if (Encrypt != null) SqlConfig.Encrypt = (bool)Encrypt;
+            Log.Debug("Encrypted connection: {Encrypt}", SqlConfig.Encrypt);
+            if (TrustCertificate != null) SqlConfig.TrustCertificate = (bool)TrustCertificate;
+            Log.Debug("Trust server certificate: {TrustCertificate}", SqlConfig.TrustCertificate);
             SqlConfig.InitialCatalog = InitialCatalog;
             Log.Debug("Initial Catalog: {InitialCatalog}", SqlConfig.InitialCatalog);
             SqlConfig.IntegratedSecurity = IntegratedSecurity;
