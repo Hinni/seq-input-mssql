@@ -10,6 +10,7 @@ namespace Seq.Input.MsSql
     {
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly Task _executorTask;
+        private static int _lockState;
 
         public ExecutorTask(ILogger logger, TimeSpan interval, string timePeriod, Executor executor)
         {
@@ -30,7 +31,15 @@ namespace Seq.Input.MsSql
                 while (!cancel.IsCancellationRequested)
                 {
                     // In valid time period?
-                    if (TimePeriodHelper.IsValidTimePeriod(DateTime.Now, timePeriod)) await executor.Start();
+                    var currentState = Interlocked.CompareExchange(ref _lockState, SqlConfig.Locked, SqlConfig.Available);
+                    if (TimePeriodHelper.IsValidTimePeriod(DateTime.Now, timePeriod) &&
+                        currentState == SqlConfig.Available)
+                    {
+                        await executor.Start();
+                    }
+
+                    // ReSharper disable once RedundantAssignment
+                    currentState = Interlocked.CompareExchange(ref _lockState, SqlConfig.Available, SqlConfig.Locked);
                     await Task.Delay(interval, cancel);
                 }
             }

@@ -22,6 +22,13 @@ namespace Seq.Input.MsSql
         private ExecutorTask _executorTask;
 
         [SeqAppSetting(
+            DisplayName = "Debug logging",
+            IsOptional = true,
+            InputType = SettingInputType.Checkbox,
+            HelpText = "Log additional debug information.")]
+        public bool? Debug { get; set; }
+
+        [SeqAppSetting(
             DisplayName = "Refresh every x seconds",
             IsOptional = false,
             InputType = SettingInputType.Integer,
@@ -36,10 +43,38 @@ namespace Seq.Input.MsSql
         public string ServerInstance { get; set; }
 
         [SeqAppSetting(
+            DisplayName = "SQL connect timeout",
+            IsOptional = true,
+            InputType = SettingInputType.Integer,
+            HelpText = "Connect timeout in seconds, default 15, maximum 120.")]
+        public int? ConnectTimeout { get; set; } = 15;
+
+        [SeqAppSetting(
+            DisplayName = "SQL query timeout",
+            IsOptional = true,
+            InputType = SettingInputType.Integer,
+            HelpText = "Query timeout in seconds, default 60, maximum 300.")]
+        public int? CommandTimeout { get; set; } = 60;
+
+        [SeqAppSetting(
+            DisplayName = "Encrypted connection",
+            IsOptional = true,
+            InputType = SettingInputType.Checkbox,
+            HelpText = "Use encryption on this connection.")]
+        public bool? Encrypt { get; set; }
+
+        [SeqAppSetting(
+            DisplayName = "Trust server certificate",
+            IsOptional = true,
+            InputType = SettingInputType.Checkbox,
+            HelpText = "If encryption is used, optionally check this box to trust any certificate presented.")]
+        public bool? TrustCertificate { get; set; }
+
+        [SeqAppSetting(
             DisplayName = "Initial catalog",
             IsOptional = false,
             InputType = SettingInputType.Text,
-            HelpText = "MSSQL ConnectionString InitialCatalog.")]
+            HelpText = "MSSQL ConnectionString Initial Catalog.")]
         public string InitialCatalog { get; set; }
 
         [SeqAppSetting(
@@ -113,7 +148,7 @@ namespace Seq.Input.MsSql
             IsOptional = true,
             InputType = SettingInputType.Text,
             HelpText =
-                "If you would like to add a new additional property to every LogEvent (recommended for filtering logs based on application).")]
+                "Add an application name property to every LogEvent (recommended for filtering logs based on application). If not specified, will default to the instance title. This will only be used when your query produces an event, and to identify the instance to SQL.")]
         public string ApplicationName { get; set; }
 
         [SeqAppSetting(
@@ -277,11 +312,20 @@ namespace Seq.Input.MsSql
             var query = $"SELECT * FROM {TableOrViewName}";
             var stringBuilder = new SqlConnectionStringBuilder
             {
-                DataSource = ServerInstance,
-                InitialCatalog = InitialCatalog
+                DataSource = SqlConfig.ServerInstance,
+                InitialCatalog = SqlConfig.InitialCatalog,
+                ConnectTimeout = SqlConfig.ConnectTimeout,
+                CommandTimeout = SqlConfig.CommandTimeout,
+                ApplicationName = SqlConfig.ApplicationName
             };
 
-            if (IntegratedSecurity)
+            if (SqlConfig.Encrypt)
+            {
+                stringBuilder.Encrypt = SqlConfig.Encrypt;
+                stringBuilder.TrustServerCertificate = SqlConfig.TrustCertificate;
+            }
+
+            if (SqlConfig.IntegratedSecurity)
             {
                 stringBuilder.IntegratedSecurity = true;
             }
@@ -310,61 +354,76 @@ namespace Seq.Input.MsSql
         protected override void OnAttached()
         {
             //Populate SqlConfig when the instance starts
+            if (Debug != null)
+                SqlConfig.Debug = (bool)Debug;
+            SqlConfig.ApplicationName = !string.IsNullOrEmpty(ApplicationName) ? ApplicationName : App.Title;
+            SqlConfig.ApplicationPropertyName = !string.IsNullOrEmpty(ApplicationPropertyName) ? ApplicationPropertyName : "Application";
+            Log.Debug("Debug logging: {Debug}", SqlConfig.Debug);
+            if (SqlConfig.Debug) Log.Debug("Application Property Name: {AppPropertyName}, App Name: {AppName}", SqlConfig.ApplicationPropertyName, SqlConfig.ApplicationName);
             SqlConfig.QueryEverySeconds = QueryEverySeconds;
-            Log.Debug("Query seconds: {QuerySeconds}", SqlConfig.QueryEverySeconds);
+            if (SqlConfig.Debug) Log.Debug("Query seconds: {QuerySeconds}", SqlConfig.QueryEverySeconds);
             SqlConfig.ServerInstance = ServerInstance;
-            Log.Debug("SQL Server instance: {SqlInstance}", SqlConfig.ServerInstance);
+            if (SqlConfig.Debug) Log.Debug("SQL Server instance: {SqlInstance}", SqlConfig.ServerInstance);
+            if (ConnectTimeout == null || ConnectTimeout < 1 || ConnectTimeout > 120)
+                ConnectTimeout = 15;
+            SqlConfig.ConnectTimeout = (int)ConnectTimeout;
+            if (SqlConfig.Debug) Log.Debug("SQL Connect Timeout: {ConnectTimeout}", SqlConfig.ConnectTimeout);
+            if (CommandTimeout == null || CommandTimeout < 1 || CommandTimeout > 300)
+                CommandTimeout = 60;
+            SqlConfig.CommandTimeout = (int)CommandTimeout;
+            if (SqlConfig.Debug) Log.Debug("SQL Query Timeout: {CommandTimeout}", SqlConfig.CommandTimeout);
+            if (Encrypt != null) SqlConfig.Encrypt = (bool)Encrypt;
+            if (SqlConfig.Debug) Log.Debug("Encrypted connection: {Encrypt}", SqlConfig.Encrypt);
+            if (TrustCertificate != null) SqlConfig.TrustCertificate = (bool)TrustCertificate;
+            if (SqlConfig.Debug) Log.Debug("Trust server certificate: {TrustCertificate}", SqlConfig.TrustCertificate);
             SqlConfig.InitialCatalog = InitialCatalog;
-            Log.Debug("Initial Catalog: {InitialCatalog}", SqlConfig.InitialCatalog);
+            if (SqlConfig.Debug) Log.Debug("Initial Catalog: {InitialCatalog}", SqlConfig.InitialCatalog);
             SqlConfig.IntegratedSecurity = IntegratedSecurity;
-            Log.Debug("Use integrated security: {IntegratedSecurity}", SqlConfig.IntegratedSecurity);
+            if (SqlConfig.Debug) Log.Debug("Use integrated security: {IntegratedSecurity}", SqlConfig.IntegratedSecurity);
             SqlConfig.DatabaseUsername = DatabaseUsername;
             SqlConfig.DatabasePassword = DatabasePassword;
             SqlConfig.TableOrViewName = TableOrViewName;
-            Log.Debug("Table or view to query: {TableOrView}", SqlConfig.TableOrViewName);
+            if (SqlConfig.Debug) Log.Debug("Table or view to query: {TableOrView}", SqlConfig.TableOrViewName);
             SqlConfig.AdditionalFilterClause = AdditionalFilterClause;
-            Log.Debug("Additional filter: {Filter}", SqlConfig.AdditionalFilterClause);
+            if (SqlConfig.Debug) Log.Debug("Additional filter: {Filter}", SqlConfig.AdditionalFilterClause);
             SqlConfig.ColumnNameTimeStamp = ColumnNameTimeStamp;
-            Log.Debug("Column for Timestamp: {ColumnTimestamp}", SqlConfig.ColumnNameTimeStamp);
+            if (SqlConfig.Debug) Log.Debug("Column for Timestamp: {ColumnTimestamp}", SqlConfig.ColumnNameTimeStamp);
             if (SecondsDelay == null || SecondsDelay < 1 || SecondsDelay > 300)
                 SecondsDelay = 1;
             SqlConfig.SecondsDelay = (int)SecondsDelay;
-            Log.Debug("Seconds Delay Config: {SecondsDelay}, will delay query by {SecondsDelayActual}", SecondsDelay, SqlConfig.SecondsDelay);
+            if (SqlConfig.Debug) Log.Debug("Seconds Delay Config: {SecondsDelay}, will delay query by {SecondsDelayActual}", SecondsDelay, SqlConfig.SecondsDelay);
             SqlConfig.ColumnNameMessage = ColumnNameMessage;
-            Log.Debug("Column for Message: {ColumnMessage}", SqlConfig.ColumnNameMessage);
+            if (SqlConfig.Debug) Log.Debug("Column for Message: {ColumnMessage}", SqlConfig.ColumnNameMessage);
             SqlConfig.ColumnNamesInclude = SqlConfig.SplitAndTrim(',', ColumnNamesInclude).ToList();
-            Log.Debug("Columns to include: {ColumnNames}", SqlConfig.ColumnNamesInclude);
-            SqlConfig.ApplicationName = ApplicationName;
-            SqlConfig.ApplicationPropertyName = ApplicationPropertyName;
-            Log.Debug("Application Property Name: {AppPropertyName}, App Name: {AppName}", SqlConfig.ApplicationPropertyName, SqlConfig.ApplicationName);
+            if (SqlConfig.Debug) Log.Debug("Columns to include: {ColumnNames}", SqlConfig.ColumnNamesInclude);
             SqlConfig.ColumnNameEventLevel = ColumnNameEventLevel;
-            Log.Debug("Column for Event Level: {ColumnEventLevel}", ColumnNameEventLevel);
+            if (SqlConfig.Debug) Log.Debug("Column for Event Level: {ColumnEventLevel}", ColumnNameEventLevel);
             if (SqlConfig.ParseEventKeyPairList(EventLevelMapping, out var eventLevelMappings))
             {
                 SqlConfig.EventLevelMapping = eventLevelMappings;
-                Log.Debug("Event level mappings: {LevelMappings}", SqlConfig.EventLevelMapping);
+                if (SqlConfig.Debug) Log.Debug("Event level mappings: {LevelMappings}", SqlConfig.EventLevelMapping);
             }
 
             SqlConfig.LogEventLevel = LogEventLevel;
-            Log.Debug("Event level / Default event level: {EventLevel}", (LogEventLevel)SqlConfig.LogEventLevel);
+            if (SqlConfig.Debug) Log.Debug("Event level / Default event level: {EventLevel}", (LogEventLevel)SqlConfig.LogEventLevel);
             SqlConfig.TimePeriod = TimePeriod;
-            Log.Debug("Time Period: {TimePeriod}", SqlConfig.TimePeriod);
+            if (SqlConfig.Debug) Log.Debug("Time Period: {TimePeriod}", SqlConfig.TimePeriod);
             if (SqlConfig.IsKeyPairList(Tags) && SqlConfig.ParseKeyPairList(Tags, out var tagMappings))
             {
                 SqlConfig.TagMappings = tagMappings;
-                Log.Debug("Tag mappings: {TagMappings}", SqlConfig.TagMappings);
+                if (SqlConfig.Debug) Log.Debug("Tag mappings: {TagMappings}", SqlConfig.TagMappings);
             }
             else if (SqlConfig.IsValue(Tags))
             {
                 SqlConfig.Tags = SqlConfig.SplitAndTrim(',', Tags);
-                Log.Debug("Tags: {Tags}", SqlConfig.Tags);
+                if (SqlConfig.Debug) Log.Debug("Tags: {Tags}", SqlConfig.Tags);
             }
 
             SqlConfig.ColumnNameTags = ColumnNameTags;
-            Log.Debug("Column for Tags: {ColumnTags}", SqlConfig.ColumnNameTags);
+            if (SqlConfig.Debug) Log.Debug("Column for Tags: {ColumnTags}", SqlConfig.ColumnNameTags);
 
             SqlConfig.ColumnNamePriority = ColumnNamePriority;
-            Log.Debug("Column for Priority: {ColumnPriority}", SqlConfig.ColumnNamePriority);
+            if (SqlConfig.Debug) Log.Debug("Column for Priority: {ColumnPriority}", SqlConfig.ColumnNamePriority);
             if (SqlConfig.ParseKeyPairList(PriorityMapping, out var priorityMappings))
             {
                 SqlConfig.PriorityMapping = priorityMappings;
@@ -372,43 +431,43 @@ namespace Seq.Input.MsSql
             }
 
             SqlConfig.ColumnNameResponder = ColumnNameResponder;
-            Log.Debug("Column for Responder: {ColumnResponder}", SqlConfig.ColumnNameResponder);
+            if (SqlConfig.Debug) Log.Debug("Column for Responder: {ColumnResponder}", SqlConfig.ColumnNameResponder);
             if (SqlConfig.ParseKeyPairList(ResponderMapping, out var responderMappings))
             {
                 SqlConfig.ResponderMapping = responderMappings;
-                Log.Debug("Responder Mappings: {ResponderMappings}", SqlConfig.ResponderMapping);
+                if (SqlConfig.Debug) Log.Debug("Responder Mappings: {ResponderMappings}", SqlConfig.ResponderMapping);
             }
 
             SqlConfig.ColumnNameProjectKey = ColumnNameProjectKey;
-            Log.Debug("Column for Project Key: {ColumnProjectKey}", SqlConfig.ColumnNameProjectKey);
+            if (SqlConfig.Debug) Log.Debug("Column for Project Key: {ColumnProjectKey}", SqlConfig.ColumnNameProjectKey);
             if (SqlConfig.ParseKeyPairList(ProjectKeyMapping, out var projectKeyMappings))
             {
                 SqlConfig.ProjectKeyMapping = projectKeyMappings;
-                Log.Debug("Project Key Mappings: {ProjectKeyMappings}", SqlConfig.ProjectKeyMapping);
+                if (SqlConfig.Debug) Log.Debug("Project Key Mappings: {ProjectKeyMappings}", SqlConfig.ProjectKeyMapping);
             }
 
             SqlConfig.ColumnNameInitialEstimate = ColumnNameInitialEstimate;
-            Log.Debug("Column for Initial Estimate: {ColumnInitialEstimate}", SqlConfig.ColumnNameInitialEstimate);
+            if (SqlConfig.Debug) Log.Debug("Column for Initial Estimate: {ColumnInitialEstimate}", SqlConfig.ColumnNameInitialEstimate);
             if (SqlConfig.ParseKeyPairList(InitialEstimateMapping, out var initialEstimateMappings))
             {
                 SqlConfig.InitialEstimateMapping = initialEstimateMappings;
-                Log.Debug("Initial Estimate Mappings: {InitialEstimateMappings}", SqlConfig.InitialEstimateMapping);
+                if (SqlConfig.Debug) Log.Debug("Initial Estimate Mappings: {InitialEstimateMappings}", SqlConfig.InitialEstimateMapping);
             }
 
             SqlConfig.ColumnNameRemainingEstimate = ColumnNameRemainingEstimate;
-            Log.Debug("Column for Remaining Estimate: {ColumnRemainingEstimate}", SqlConfig.ColumnNameRemainingEstimate);
+            if (SqlConfig.Debug) Log.Debug("Column for Remaining Estimate: {ColumnRemainingEstimate}", SqlConfig.ColumnNameRemainingEstimate);
             if (SqlConfig.ParseKeyPairList(RemainingEstimateMapping, out var remainingEstimateMappings))
             {
                 SqlConfig.RemainingEstimateMapping = remainingEstimateMappings;
-                Log.Debug("Remaining Estimate Mappings: {RemainingEstimateMappings}", SqlConfig.RemainingEstimateMapping);
+                if (SqlConfig.Debug) Log.Debug("Remaining Estimate Mappings: {RemainingEstimateMappings}", SqlConfig.RemainingEstimateMapping);
             }
 
             SqlConfig.ColumnNameDueDate = ColumnNameDueDate;
-            Log.Debug("Column for Due Date: {ColumnDueDate}", SqlConfig.ColumnNameDueDate);
+            if (SqlConfig.Debug) Log.Debug("Column for Due Date: {ColumnDueDate}", SqlConfig.ColumnNameDueDate);
             if (SqlConfig.ParseKeyPairList(DueDateMapping, out var dueDateMappings))
             {
                 SqlConfig.DueDateMapping = dueDateMappings;
-                Log.Debug("Due Date Mappings: {DueDateMappings}", SqlConfig.DueDateMapping);
+                if (SqlConfig.Debug) Log.Debug("Due Date Mappings: {DueDateMappings}", SqlConfig.DueDateMapping);
             }
         }
     }

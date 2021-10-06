@@ -9,8 +9,17 @@ namespace Seq.Input.MSSql
 {
     public static class SqlConfig
     {
+        public const int Available = 0;
+        public const int Locked = 1;
+
+        public static bool Debug { get; set; }
+
         public static int QueryEverySeconds { get; set; }
         public static string ServerInstance { get; set; }
+        public static int ConnectTimeout { get; set; }
+        public static int CommandTimeout { get; set; }
+        public static bool Encrypt { get; set; }
+        public static bool TrustCertificate { get; set; }
         public static string InitialCatalog { get; set; }
         public static bool IntegratedSecurity { get; set; }
         public static string DatabaseUsername { get; set; }

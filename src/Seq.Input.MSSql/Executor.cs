@@ -63,19 +63,22 @@ namespace Seq.Input.MsSql
                             }
                             else
                             {
-                                _logger.Debug("lastScan.txt did not contain content");
+                                if (SqlConfig.Debug)
+                                    _logger.Debug("lastScan.txt did not contain content");
                             }
                         }
                         else
                         {
-                            _logger.Debug("lastScan.txt not found");
+                            if (SqlConfig.Debug)
+                                _logger.Debug("lastScan.txt not found");
                         }
 
                         if (!validLastStamp)
                         {
                             //Avoid ingesting every event by limiting the query to last day up to current runTime (-1 sec)
                             dateTime = DateTime.Now.AddDays(-1);
-                            _logger.Debug("Could not determine last scan time - query limited to last day");
+                            if (SqlConfig.Debug)
+                                _logger.Debug("Could not determine last scan time - query limited to last day");
                         }
 
                         //In case SecondsDelay is changed and we now would have an invalid query, adjust dateTime
@@ -85,9 +88,16 @@ namespace Seq.Input.MsSql
                         //Only retrieve events that occurs after the last dateTime and up to the current runTime (- 1 sec)
                         clauseList.Add($"{SqlConfig.ColumnNameTimeStamp} > '{dateTime:yyyy-MM-dd HH:mm:ss.fff}'");
                         clauseList.Add($"{SqlConfig.ColumnNameTimeStamp} <= '{runTime:yyyy-MM-dd HH:mm:ss.fff}'");
-                        _logger.Debug("Query new table rows from {StartDateTime} to {EndDateTime}", dateTime, runTime);
 
                         var queryString = _query + CreateWhereClause(clauseList);
+                        if (SqlConfig.Debug)
+                            _logger.ForContext("ConnectionString", _connectionString)
+                                .ForContext("QueryString", queryString).Debug(
+                                    "Query new table rows from {StartDateTime} to {EndDateTime}", dateTime,
+                                    runTime);
+                        else
+                            _logger.Debug("Query new table rows from {StartDateTime} to {EndDateTime}", dateTime,
+                                runTime);
 
                         // Create command and execute
                         command.CommandText = queryString;
@@ -135,7 +145,8 @@ namespace Seq.Input.MsSql
                         var remainingEstimateIndex = -1;
                         if (!string.IsNullOrEmpty(SqlConfig.ColumnNameRemainingEstimate))
                             remainingEstimateIndex = columnNameList.FindIndex(s =>
-                                s.Equals(SqlConfig.ColumnNameRemainingEstimate, StringComparison.OrdinalIgnoreCase));
+                                s.Equals(SqlConfig.ColumnNameRemainingEstimate,
+                                    StringComparison.OrdinalIgnoreCase));
                         var dueDateIndex = -1;
                         if (!string.IsNullOrEmpty(SqlConfig.ColumnNameDueDate))
                             dueDateIndex = columnNameList.FindIndex(s =>
@@ -147,13 +158,13 @@ namespace Seq.Input.MsSql
                             var message = dataReader.IsDBNull(messageIndex)
                                 ? string.Empty
                                 : dataReader.GetString(messageIndex);
-                            var logEventLevel = (LogEventLevel) Enum.Parse(typeof(LogEventLevel),
+                            var logEventLevel = (LogEventLevel)Enum.Parse(typeof(LogEventLevel),
                                 SqlConfig.LogEventLevel.ToString());
                             if (eventLevelIndex >= 0 && !dataReader.IsDBNull(eventLevelIndex) &&
                                 TryGetEventLevelCI(dataReader.GetString(eventLevelIndex), out var eventLevel))
                                 logEventLevel = eventLevel;
 
-                            _logger.BindMessageTemplate(message, new object[0], out var messageTemplate,
+                            _logger.BindMessageTemplate(message, Array.Empty<object>(), out var messageTemplate,
                                 out var boundProperties);
                             var logEvent = new LogEvent(timeStamp, logEventLevel, null, messageTemplate,
                                 boundProperties);
@@ -161,7 +172,8 @@ namespace Seq.Input.MsSql
                             for (var i = 0; i < dataReader.FieldCount; i++)
                                 foreach (var unused in SqlConfig.ColumnNamesInclude.Where(columnName =>
                                     columnName.Equals(columnNameList[i], StringComparison.OrdinalIgnoreCase)))
-                                    if (_logger.BindProperty(columnNameList[i], dataReader[i], false, out var property))
+                                    if (_logger.BindProperty(columnNameList[i], dataReader[i], false,
+                                        out var property))
                                         logEvent.AddOrUpdateProperty(property);
 
                             var tags = new List<string>();
@@ -203,12 +215,14 @@ namespace Seq.Input.MsSql
                                     SqlConfig.ResponderMapping, dataReader.GetString(responderIndex),
                                     out var responderValue))
                                 {
-                                    if (_logger.BindProperty("Responders", responderValue, false, out var responder))
+                                    if (_logger.BindProperty("Responders", responderValue, false,
+                                        out var responder))
                                         logEvent.AddOrUpdateProperty(responder);
                                 }
                                 else
                                 {
-                                    if (_logger.BindProperty("Responders", dataReader.GetString(responderIndex), false,
+                                    if (_logger.BindProperty("Responders", dataReader.GetString(responderIndex),
+                                        false,
                                         out var responder))
                                         logEvent.AddOrUpdateProperty(responder);
                                 }
@@ -220,12 +234,14 @@ namespace Seq.Input.MsSql
                                     SqlConfig.ProjectKeyMapping, dataReader.GetString(projectKeyIndex),
                                     out var projectKeyValue))
                                 {
-                                    if (_logger.BindProperty("ProjectKey", projectKeyValue, false, out var projectKey))
+                                    if (_logger.BindProperty("ProjectKey", projectKeyValue, false,
+                                        out var projectKey))
                                         logEvent.AddOrUpdateProperty(projectKey);
                                 }
                                 else
                                 {
-                                    if (_logger.BindProperty("ProjectKey", dataReader.GetString(projectKeyIndex), false,
+                                    if (_logger.BindProperty("ProjectKey", dataReader.GetString(projectKeyIndex),
+                                        false,
                                         out var projectKey))
                                         logEvent.AddOrUpdateProperty(projectKey);
                                 }
@@ -252,7 +268,8 @@ namespace Seq.Input.MsSql
                             if (remainingEstimateIndex >= 0 && !dataReader.IsDBNull(remainingEstimateIndex))
                             {
                                 if (SqlConfig.RemainingEstimateMapping.Count > 0 && TryGetPropertyValueCI(
-                                    SqlConfig.RemainingEstimateMapping, dataReader.GetString(remainingEstimateIndex),
+                                    SqlConfig.RemainingEstimateMapping,
+                                    dataReader.GetString(remainingEstimateIndex),
                                     out var remainingEstimateValue))
                                 {
                                     if (_logger.BindProperty("RemainingEstimate", remainingEstimateValue, false,
@@ -262,7 +279,8 @@ namespace Seq.Input.MsSql
                                 else
                                 {
                                     if (_logger.BindProperty("RemainingEstimate",
-                                        dataReader.GetString(remainingEstimateIndex), false, out var remainingEstimate))
+                                        dataReader.GetString(remainingEstimateIndex), false,
+                                        out var remainingEstimate))
                                         logEvent.AddOrUpdateProperty(remainingEstimate);
                                 }
                             }
@@ -302,6 +320,7 @@ namespace Seq.Input.MsSql
                             writer.Emit(logEvent);
                         }
                     }
+
                 }
             }
             catch (SqlException ex)
