@@ -121,11 +121,11 @@ namespace Seq.Input.MsSql
         public string ColumnNameTimeStamp { get; set; }
 
         [SeqAppSetting(
-            DisplayName = "Seconds delay",
+            DisplayName = "Query time delay",
             IsOptional = true,
             InputType = SettingInputType.Integer,
             HelpText =
-                "Seconds to subtract from current time to allow for database rows being inserted late and timestamps that don't measure in milliseconds. Minimum 1, maximum 300, default 1.")]
+                "Allows setting a time delay on the period that will be queried, allowing for database rows being inserted late and timestamps that don't measure in milliseconds. Minimum 1, maximum 86400 (24 hours), default 1.")]
         public int? SecondsDelay { get; set; } = 1;
 
         [SeqAppSetting(
@@ -388,7 +388,7 @@ namespace Seq.Input.MsSql
             if (SqlConfig.Debug) Log.Debug("Additional filter: {Filter}", SqlConfig.AdditionalFilterClause);
             SqlConfig.ColumnNameTimeStamp = ColumnNameTimeStamp;
             if (SqlConfig.Debug) Log.Debug("Column for Timestamp: {ColumnTimestamp}", SqlConfig.ColumnNameTimeStamp);
-            if (SecondsDelay == null || SecondsDelay < 1 || SecondsDelay > 300)
+            if (SecondsDelay == null || SecondsDelay < 1 || SecondsDelay > 86400)
                 SecondsDelay = 1;
             SqlConfig.SecondsDelay = (int)SecondsDelay;
             if (SqlConfig.Debug) Log.Debug("Seconds Delay Config: {SecondsDelay}, will delay query by {SecondsDelayActual}", SecondsDelay, SqlConfig.SecondsDelay);
