@@ -60,6 +60,10 @@ namespace Seq.Input.MsSql
                             {
                                 validLastStamp = true;
                                 dateTime = DateTime.Parse(content);
+
+                                //Compensate for time changes, eg. DST
+                                if (DateTime.Compare(dateTime, runTime) > 0)
+                                    dateTime = runTime.AddSeconds(-1);
                             }
                             else
                             {
