@@ -21,5 +21,11 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Test
         run: dotnet test --no-restore --verbosity normal
-      - name: Pack nugets
+      - name: Packaging
         run: dotnet pack --configuration Release --no-build --no-restore --output .
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget-package
+          path: ./*.nupkg
+          if-no-files-found: warn
