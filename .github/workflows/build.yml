@@ -1,21 +1,20 @@
 name: Build & Package
 
-defaults:
-  run:
-    dotnet-version: '6.0.x'
+permissions:
+  contents: read
 
-on: [push]
+on: [ push ]
 
 jobs:
   build:
-    runs-on: [windows-latest, x64]
+    runs-on: [ windows-latest, x64 ]
 
     steps:
       - uses: actions/checkout@v3
-      - name: Setup .NET Core SDK ${{ defaults.run.dotnet-version }}
+      - name: Setup .NET Core SDK 6.0.x
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ defaults.run.dotnet-version }}
+          dotnet-version: '6.0.x'
       - name: Install dependencies
         run: dotnet restore
       - name: Build
