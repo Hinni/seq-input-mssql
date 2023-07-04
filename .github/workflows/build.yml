@@ -1,7 +1,8 @@
 name: Build & Package
 
 defaults:
-  dotnet-version: '6.0.x'
+  run:
+    dotnet-version: '6.0.x'
 
 on: [push]
 
@@ -11,10 +12,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Setup .NET Core SDK ${{ defaults.dotnet-version }}
+      - name: Setup .NET Core SDK ${{ defaults.run.dotnet-version }}
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ defaults.dotnet-version }}
+          dotnet-version: ${{ defaults.run.dotnet-version }}
       - name: Install dependencies
         run: dotnet restore
       - name: Build
