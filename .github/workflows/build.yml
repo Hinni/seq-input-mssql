@@ -21,3 +21,5 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Test
         run: dotnet test --no-restore --verbosity normal
+      - name: Pack nugets
+        run: dotnet pack --configuration Release --no-build --no-restore --output .
