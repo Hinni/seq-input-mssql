@@ -23,7 +23,7 @@
     <PackageReleaseNotes>Update Seq.Input.MSSQL to provide structured properties for interoperability with other apps such as Seq.App.OpsGenie and Seq.App.Atlassian.Jira</PackageReleaseNotes>
     <AssemblyName>Seq.Input.MSSql</AssemblyName>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <Version>1.2.3</Version>
+    <Version>1.2.4</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -41,8 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
-    <PackageReference Include="Seq.Apps" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+    <PackageReference Include="Seq.Apps" Version="2021.4.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
   </ItemGroup>
 
