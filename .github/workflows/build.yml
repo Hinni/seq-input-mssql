@@ -1,10 +1,12 @@
+name: Build & package
+
 defaults:
   dotnet-version: '6.0.x'
 
+on: [push]
+
 jobs:
   build:
-
-    name: Build & package
     runs-on: [windows-latest, x64]
 
     steps:
