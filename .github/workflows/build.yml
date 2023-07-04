@@ -1,4 +1,4 @@
-name: Build & package
+name: Build & Package
 
 defaults:
   dotnet-version: '6.0.x'
