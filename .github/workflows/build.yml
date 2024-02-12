@@ -1,0 +1,31 @@
+name: Build & Package
+
+permissions:
+  contents: read
+
+on: [ push ]
+
+jobs:
+  build:
+    runs-on: [ windows-latest ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK 6.0.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
+      - name: Packaging
+        run: dotnet pack --configuration Release --no-build --no-restore --output .
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget-package
+          path: ./*.nupkg
+          if-no-files-found: warn

@@ -1,4 +1,4 @@
-Seq.Input.MsSql is Copyright © 2019-2021 Hinni Solutions and Contributors, 
+Seq.Input.MsSql is Copyright © 2019-2023 Hinni Solutions and Contributors, 
 provided subject to the Apache License, Version 2.0.
 
 The Seq.Input.MsSql NuGet package includes binary components licensed by
@@ -200,7 +200,7 @@ their respective copyright owners, including but not limited to:
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2019-2021 Hinni Solutions and Contributors
+   Copyright 2019-2023 Hinni Solutions and Contributors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
