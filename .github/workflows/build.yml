@@ -1,0 +1,55 @@
+name: Build & Package
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master", "features/*" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore --no-cache
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    env:
+      CSPROJ_NAME: Seq.Input.MSSql.csproj
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore ${CSPROJ_NAME} --no-cache
+      working-directory: ./src/Seq.Input.MSSql
+    - name: Publish
+      run: dotnet publish ${CSPROJ_NAME} -c Release -o ./obj/publish --no-restore
+      working-directory: ./src/Seq.Input.MSSql
+    - name: Pack
+      run: dotnet pack ${CSPROJ_NAME} -c Release -o ../../artifacts --no-build --no-restore
+      working-directory: ./src/Seq.Input.MSSql
+    - name: Upload nuget
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package
+        path: ./artifacts/*.nupkg
+        if-no-files-found: warn
+        compression-level: 9
+        retention-days: 1
