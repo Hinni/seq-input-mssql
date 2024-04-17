@@ -31,9 +31,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
-    <None Include="..\..\README.md" Pack="true" PackagePath="" />
-    <None Include="..\..\MSSQL.png" Pack="true" PackagePath="" />
+    <None Include="../../LICENSE" Pack="true" PackagePath="" />
+    <None Include="../../README.md" Pack="true" PackagePath="" />
+    <None Include="./MSSQL.png" Pack="true" PackagePath="" />
+    <None Include="./MSSQL.ico" Pack="true" PackagePath="" />
     <None Include="./obj/publish/**/*" Exclude="./obj/publish/$(MSBuildProjectName).dll;./obj/publish/Seq.Apps.dll;./obj/publish/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
   </ItemGroup>
 
