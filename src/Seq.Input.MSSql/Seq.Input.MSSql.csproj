@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <TargetFramework>net6.0</TargetFramework>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <TreatSpecificWarningsAsErrors />
     <Authors>Hinni Solutions and Contributors</Authors>
-    <VersionPrefix>1.2.4</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
     <Description>Ingest events into Seq directly from MSSQL table.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright © 2019-2023 Hinni Solutions and Contributors</Copyright>
+    <Copyright>Copyright © 2019-2024 Hinni Solutions and Contributors</Copyright>
     <RepositoryUrl>https://github.com/Hinni/seq-input-mssql.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>seq-app Seq Input MSSQL</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/Hinni/seq-input-mssql</PackageProjectUrl>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageIcon>MSSQL.png</PackageIcon>
@@ -31,18 +31,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\LICENSE" Link="LICENSE" Pack="true" PackagePath="" />
-    <None Include="$(OutDir)/**/*.dll" Exclude="$(OutDir)/$(MSBuildProjectName).dll;$(OutDir)/Seq.Apps.dll;$(OutDir)/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
-    <None Include="MSSQL.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+    <None Include="..\..\MSSQL.png" Pack="true" PackagePath="" />
+    <None Include="./obj/publish/**/*" Exclude="./obj/publish/$(MSBuildProjectName).dll;./obj/publish/Seq.Apps.dll;./obj/publish/Serilog.dll" Pack="true" PackagePath="lib/$(TargetFramework)" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.3" />
-    <PackageReference Include="Seq.Apps" Version="2021.4.0" />
-    <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
+    <PackageReference Include="Seq.Apps" Version="2023.4.0" />
+    <PackageReference Include="Serilog.Formatting.Compact" Version="2.0.0" />
   </ItemGroup>
 
 </Project>
