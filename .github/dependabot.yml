@@ -3,7 +3,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "dotnet-sdk"
+  - package-ecosystem: "nuget"
     directories:
       - "src/Seq.Input.MSSql"
       - "src/Seq.Input.MSSql.Tests"
