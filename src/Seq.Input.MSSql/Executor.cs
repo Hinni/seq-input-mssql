@@ -99,9 +99,6 @@ namespace Seq.Input.MsSql
                                 .ForContext("QueryString", queryString).Debug(
                                     "Query new table rows from {StartDateTime} to {EndDateTime}", dateTime,
                                     runTime);
-                        else
-                            _logger.Debug("Query new table rows from {StartDateTime} to {EndDateTime}", dateTime,
-                                runTime);
 
                         // Create command and execute
                         command.CommandText = queryString;
