@@ -5,7 +5,7 @@ version: 2
 updates:
   - package-ecosystem: "dotnet-sdk"
     directories:
-      - "/src/Seq.Input.MSSql.Tests"
-      - "/src/Seq.Input.MSSql"
+      - "src/Seq.Input.MSSql"
+      - "src/Seq.Input.MSSql.Tests"
     schedule:
       interval: "daily"
