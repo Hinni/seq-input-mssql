@@ -9,3 +9,6 @@ updates:
       - "src/Seq.Input.MSSql.Tests"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 6
+      semver-patch-days: 3
