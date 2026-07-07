@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.2" />
     <PackageReference Include="Seq.Apps" Version="2023.4.0" />
     <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
   </ItemGroup>
